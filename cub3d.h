@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/04 04:17:50 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/07 03:40:53 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,27 @@
 # include <stdio.h>
 # include <math.h>
 # define PI 3.14159265359
+# define MAP_WIDTH 800
+# define MAP_HEIGHT 800
+# define row 8
+# define column 8
+# define max_row 8
+# define max_column 8
 
 typedef struct s_object
 {
 	mlx_image_t	*img;
-	float			x;
-	float			y;
-	float		angle;
-	float		delta_x;
-	float		delta_y;
+	double		x;
+	double		y;
+	double		angle;
+	double		delta_x;
+	double		delta_y;
 }t_object;
 
 typedef struct s_game
 {
 	mlx_t		*mlx;
+	mlx_t		*ray_mlx;
 	t_object	*player;
 }t_game;
 
