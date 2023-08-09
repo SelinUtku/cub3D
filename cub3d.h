@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/07 03:40:53 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/09 01:35:12 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@
 # include <stdio.h>
 # include <math.h>
 # define PI 3.14159265359
-# define MAP_WIDTH 800
+# define MAP_WIDTH 1600
 # define MAP_HEIGHT 800
 # define row 8
-# define column 8
+# define column 16
 # define max_row 8
-# define max_column 8
+# define max_column 16
 
 typedef struct s_object
 {
