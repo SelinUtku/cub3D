@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/02 05:33:16 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/07 05:13:22 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/09 01:13:38 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,7 @@ double	pythagoras(double start_x, double start_y, double end_x, double end_y, do
 	y = fabs(end_y - start_y);
 	x = pow(x, 2);
 	y = pow(y, 2);
-	printf("%f, %f\t", x, y);
 	len = sqrtf(x + y);
-	printf("%f\n", len);
 	len *= cos(cast_angle);
 	// 	return ((int)round(y));
 	// return ((int)round(x));
@@ -206,10 +204,8 @@ void castRays(t_game *game)
 			{
 				rayX += cos(cast_angle);
 				rayY += sin(cast_angle);
-				int mapX = (int)(rayX/100);
-				int mapY = (int)(rayY/100);
-				mapX*=100;
-				mapY*=100;
+				int mapX = (int)(rayX);
+				int mapY = (int)(rayY);
 				// isWall(game ,mapX, mapY);
 				// if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT || isWall(game ,mapX, mapY))
 				// {
@@ -221,7 +217,7 @@ void castRays(t_game *game)
 						// 	fov_ang -= 2 * PI;
 						// color = color_decider(cast_angle);
 						color = 0xFF000040;
-						drawWallColumn(game, bla, pythagoras(game->player->x, game->player->y, mapX, rayY, fov_ang), color);
+						drawWallColumn(game, bla, pythagoras(game->player->x, game->player->y, rayX, rayY, fov_ang), color);
 						bla++;
 					break;
 					}
