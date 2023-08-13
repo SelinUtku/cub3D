@@ -12,7 +12,7 @@
 
 .SILENT:
 
-CB_SRC		=	cub3d.c
+CB_SRC		=	cub3d_deneme.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 # BONUS_SRC	=	sl_bonus/so_long.c sl_bonus/error.c sl_bonus/put_image.c\
@@ -25,7 +25,7 @@ CB_OBJ		=	$(CB_SRC:.c=.o)
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-
+GLFW_LIB	=	-lglfw -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
 # LIBFT		=	libft/
 # LIBFT_LIB	=	libft/libft.a
 
@@ -51,13 +51,12 @@ WHITE = \033[0;97m
 all:	$(NAME)
 
 $(NAME): $(CB_OBJ) $(MLX_LIB) 
-	$(CC) $(CFLAGS) $(CB_OBJ) $(MLX_LIB)  -o $(NAME) -lglfw 
+	$(CC) $(CFLAGS) $(CB_OBJ) $(MLX_LIB)  -o $(NAME) $(GLFW_LIB)
 	echo "$(GREEN)so_long compiled successfully$(DEF_COLOR)"
 
 # $(NAME_B): $(BONUS_OBJ) $(MLX_LIB) $(LIBFT_LIB) $(PRINTF_LIB) $(GNL_OBJ)
 # 	$(CC) $(CFLAGS) $(BONUS_OBJ) $(MLX_LIB) $(LIBFT_LIB) $(PRINTF_LIB) $(GNL_OBJ) -o $(NAME_B) -I MLX42/include -lglfw -L /Users/$(USER)/brew/opt/glfw/lib/
 # 	echo "$(GREEN)so_long_bonus compiled successfully$(DEF_COLOR)"
-
 $(MLX_LIB):
 	cd MLX42 && cmake -B build && cd ..
 	make -C $(MLX)
