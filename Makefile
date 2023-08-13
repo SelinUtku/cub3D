@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+         #
+#    By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/12 17:03:42 by sutku             #+#    #+#              #
-#    Updated: 2023/08/09 01:32:07 by sutku            ###   ########.fr        #
+#    Updated: 2023/08/13 17:58:40 by Cutku            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .SILENT:
 
-CB_SRC		=	cub3d_deneme.c
+CB_SRC		=	try_vector.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 # BONUS_SRC	=	sl_bonus/so_long.c sl_bonus/error.c sl_bonus/put_image.c\
@@ -25,7 +25,8 @@ CB_OBJ		=	$(CB_SRC:.c=.o)
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-GLFW_LIB	=	-lglfw -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
+GLFW_LIB	=	-lglfw
+#  -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
 # LIBFT		=	libft/
 # LIBFT_LIB	=	libft/libft.a
 
