@@ -19,18 +19,18 @@
 # include <stdio.h>
 # include <math.h>
 # define PI 3.14159265359
-# define MAP_WIDTH 1600
+# define MAP_WIDTH 800
 # define MAP_HEIGHT 800
 # define row 8
-# define column 16
+# define column 8
 # define max_row 8
-# define max_column 16
+# define max_column 8
 
 typedef struct s_object
 {
 	mlx_image_t	*img;
-	double		x;
-	double		y;
+	int			x;
+	int			y;
 	double		angle;
 	double		delta_x;
 	double		delta_y;
@@ -42,5 +42,13 @@ typedef struct s_game
 	mlx_t		*ray_mlx;
 	t_object	*player;
 }t_game;
+
+typedef struct s_ray
+{
+	int		x;
+	int		y;
+	int		len;
+	double	angle;
+}t_ray;
 
 #endif

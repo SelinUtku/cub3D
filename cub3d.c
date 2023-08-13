@@ -201,3 +201,278 @@ int32_t	main(int argc, char **argv)
 	mlx_terminate(game->mlx);
 	return (EXIT_SUCCESS);
 }
+
+
+
+
+t_ray	check_horizontal_intersection(t_game *game, double angle)
+{
+	t_ray	ray;
+	int		delta_y;
+	int		delta_x;
+
+	if (0.0 < angle && angle < PI)
+	{
+		delta_y = -100;
+		ray.y = ((int)(game->player->y / 100) * 100) - 1;
+		if (angle == PI / 2)
+		{
+			ray.x = game->player->x;
+			delta_x = 0;
+		}
+		else
+		{
+			ray.x = game->player->x + (int)((game->player->y - ray.y) / tan(angle));
+			delta_x = 100 / tan(angle);
+		}
+	}
+	else
+	{
+		delta_y = 100;
+		ray.y = ((int)(game->player->y / 100) * 100) + 100;
+		if (angle == (PI / 2) * 3)
+		{
+			ray.x = game->player->x;
+			delta_x = 0;
+		}
+		else
+		{
+			ray.x = game->player->x + (int)((game->player->y - ray.y) / tan(angle));
+			delta_x = 100 / tan(angle);
+		}
+	}
+	while ((ray.x < MAP_WIDTH && ray.y < MAP_HEIGHT && ray.x > 0 && ray.y > 0) && iswall(game, ray.x, ray.y) != 1)
+	{
+		ray.y += delta_y;
+		ray.x += delta_x;
+	}
+	if (!(ray.x < MAP_WIDTH && ray.y < MAP_HEIGHT && ray.x > 0 && ray.y > 0))
+	{
+		ray.len = INT32_MAX;
+		return (ray);
+	}
+	ray.len = pythagoras(game->player->x, game->player->y, ray.x, ray.y, angle);
+	return (ray);
+}
+
+t_ray	check_vertical_intersection(t_game *game, double angle)
+{
+	t_ray	ray;
+	int		delta_y;
+	int		delta_x;
+
+	if (angle == PI / 2 || angle == (PI / 2) * 3)
+	{
+		ray.x = game->player->x;
+		ray.y = game->player->y;
+		ray.len = INT32_MAX;
+		return (ray);
+	}
+	if (angle < PI / 2 || angle > (PI / 2) * 3)
+	{
+		delta_x = 100;
+		ray.x = ((int)(game->player->x / 100) * 100) + 100;
+		if (angle == 0.0)
+		{
+			delta_y = 0;
+			ray.y = game->player->y;
+		}
+		else
+		{
+			delta_y = 100 / tan(angle);
+			ray.y = game->player->y + (int)((abs(game->player->x - ray.x)) * tan(angle));
+		}
+	}
+	else
+	{
+		delta_x = -100;
+		ray.x = ((int)(game->player->x / 100) * 100) - 1;
+		if (angle == PI)
+		{
+			delta_y = 0;
+			ray.y = game->player->y;			
+		}
+		else
+		{
+			delta_y = 100 / tan(angle);
+			ray.y = game->player->y + (int)((abs(game->player->x - ray.x)) * tan(angle));
+		}
+	}
+	while (ray.x < MAP_WIDTH && ray.y < MAP_HEIGHT && ray.x > 0 && ray.y > 0 && iswall(game, ray.x, ray.y) != 1)
+	{
+		ray.y += delta_y;
+		ray.x += delta_x;
+	}
+	if (!(ray.x < MAP_WIDTH && ray.y < MAP_HEIGHT && ray.x > 0 && ray.y > 0))
+	{
+		ray.len = INT32_MAX;
+		return (ray);
+	}
+	ray.len = pythagoras(game->player->x, game->player->y, ray.x, ray.y, angle);
+	return (ray);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+t_ray	check_horizontal_intersection(t_game *game, double angle)
+{
+	t_ray	ray;
+	int		delta_y;
+	int		delta_x;
+	float	atan;
+	int		dof;
+
+	atan = -1 / tan(angle);
+	dof = 0;
+	if (angle > PI)//looking up
+	{
+		ray.y = (int)(game->player->y / 100) * 100 - 0.0001;
+		ray.x = (game->player->y - ray.y) * atan + game->player->x;
+		delta_y = -100;
+		delta_x = -delta_y * atan;
+	}
+	if (angle < PI)
+	{
+		ray.y = (int)(game->player->y / 100) * 100 + 100;
+		ray.x = (game->player->y - ray.y) * atan + game->player->x;
+		delta_y = 100;
+		delta_x = -delta_y * atan;
+	}
+	if (angle == 0 || angle == PI || ray.x == game->player->x || ray.y == game->player->y)
+		dof = 8;
+	while (dof < 8)
+	{
+		if (iswall(game, ray.x, ray.y) == 1)
+			dof = 8;
+		else
+		{
+			ray.x += delta_x;
+			ray.y += delta_y;
+			dof++;
+		}
+	}
+	ray.len = pythagoras(game->player->x, game->player->y, ray.x, ray.y, angle);
+	return (ray);
+}
+
+t_ray	check_vertical_intersection(t_game *game, double angle)
+{
+	t_ray	ray;
+	int		delta_y;
+	int		delta_x;
+	int		dof;
+	float	ntan; 
+
+	ntan = -tan(angle);
+	dof = 0;
+	if(angle > PI /2 && angle < 3 * PI / 2)
+	{
+		ray.x = ((int)game->player->x / 100) * 100 - 0.0001;
+		ray.y = (game->player->x - ray.x) * ntan + game->player->y;
+		delta_x = -100;
+		delta_y = -delta_x * ntan;
+	}
+	if (angle < PI/2 || angle > 3 * PI /2)
+	{
+		ray.x = ((int)game->player->x / 100) * 100 + 100;;
+		ray.y = (game->player->x - ray.x) * ntan + game->player->y;
+		delta_x = 100;
+		delta_y = -delta_x * ntan;
+	}
+	if (angle == 0 || angle == PI || ray.x == game->player->x || ray.y == game->player->y)
+		dof = 8;
+	while (dof < 8)
+	{
+		if (iswall(game, ray.x, ray.y) == 1)
+			dof = 8;
+		else
+		{
+			ray.x += delta_x;
+			ray.y += delta_y;
+			dof++;		
+		}
+	}
+	ray.len = pythagoras(game->player->x, game->player->y, ray.x, ray.y, angle);
+	return (ray);
+}
+
+
+
+
+
+
+
+
+
+
+/////last
+
+_ray	check_vertical_intersection(t_game *game, double angle)
+{
+	t_ray	ray;
+	int		delta_y;
+	int		delta_x;
+
+	if (angle == PI / 2 || angle == (PI / 2) * 3)
+	{
+		ray.x = game->player->x;
+		ray.y = game->player->y;
+		ray.len = INT32_MAX;
+		return (ray);
+	}
+	if (angle < PI / 2 || angle > (PI / 2) * 3)
+	{
+		delta_x = 100;
+		ray.x = ((int)(game->player->x / 100) * 100) + 100;
+		if (angle == 0.0)
+		{
+			delta_y = 0;
+			ray.y = game->player->y;
+		}
+		else
+		{
+			delta_y = 100 * tan(angle);
+			ray.y = game->player->y + (int)(game->player->x - ray.x) * tan(angle);
+		}
+	}
+	else
+	{
+		delta_x = -100;
+		ray.x = ((int)(game->player->x / 100) * 100) - 1;
+		if (angle == PI)
+		{
+			delta_y = 0;
+			ray.y = game->player->y;			
+		}
+		else
+		{
+			delta_y = 100 * tan(angle);
+			ray.y = game->player->y + (int)(game->player->x - ray.x) * tan(angle);
+		}
+	}
+	while (ray.x < MAP_WIDTH && ray.y < MAP_HEIGHT && ray.x > 0 && ray.y > 0 && iswall(game, ray.x, ray.y) != 1)
+	{
+		ray.y += delta_y;
+		ray.x += delta_x;
+	}
+	if (!(ray.x < MAP_WIDTH && ray.y < MAP_HEIGHT && ray.x > 0 && ray.y > 0))
+	{
+		ray.len = INT32_MAX;
+		return (ray);
+	}
+	ray.len = pythagoras(game->player->x, game->player->y, ray.x, ray.y, angle);
+	return (ray);
+}
