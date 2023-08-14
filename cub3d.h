@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/13 23:46:09 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/14 20:51:02 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 
 typedef struct s_object
 {
-	int			x;
-	int			y;
+	double			x;
+	double			y;
 	double		dir_x;
 	double		dir_y;
 }t_object;
