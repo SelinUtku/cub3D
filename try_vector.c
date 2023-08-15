@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 17:11:57 by Cutku             #+#    #+#             */
-/*   Updated: 2023/08/15 00:15:06 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/15 23:32:25 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ int map[18][24] = {
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1},
+				{1,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,1},
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1},
+				{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 				{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
 				{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
 				{1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+				{1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1},
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 				{1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1},
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -110,15 +110,46 @@ int	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 	return (r << 24 | g << 16 | b << 8 | a);
 }
 
+void	init_player_direction(t_game *game)
+{
+	if (game->dir == WE)
+	{
+		game->player->dir_x = -1;
+		game->player->dir_y = 0;
+		game->plane_x = 0.0;
+		game->plane_y = 0.66;
+	}
+	else if (game->dir == EA)
+	{
+		game->player->dir_x = 1;
+		game->player->dir_y = 0;
+		game->plane_x = 0.0;
+		game->plane_y = 0.66;
+	}
+	else if (game->dir == NO)
+	{
+		game->player->dir_x = 0.0;
+		game->player->dir_y = -1.0;
+		game->plane_x = 0.66;
+		game->plane_y = 0.0;
+	}
+	else
+	{
+		game->player->dir_x = 0.0;
+		game->player->dir_y = 1.0;
+		game->plane_x = -0.66;
+		game->plane_y = 0.0;
+	}
+}
+
+
 void	init_struct(t_game *game)
 {
 	game->mlx = NULL;
 	game->player = malloc (sizeof(t_object));
-	game->player->dir_x = -1;//west
-	game->player->dir_y = 0;
+	game->dir = NO;
+	init_player_direction(game);
 	// game->player->angle = PI;
-	game->plane_x = 0.0;
-	game->plane_y = 0.66;
 }
 
 void	player_position(t_game *game)
@@ -153,6 +184,8 @@ void	draw_map(t_game *game)
 	int		map_x;
 	int		map_y;
 
+		// game->texture = convert_to_image(game, "/Users/sutku/Projects/cub3d/wall.xpm42");
+	mlx_texture_t texture = mlx_load_xpm42("/Users/sutku/Projects/cub3d/wall.xpm42")->texture;
 	i = -1;
 	while(++i < SCREEN_WIDTH)
 	{
@@ -226,31 +259,64 @@ void	draw_map(t_game *game)
 			perpWallDist = (sideDistY - delta_y);
 		int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 		int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if(drawStart < 0) 
-			drawStart = 0;
+		// if(drawStart < 0) 
+		// 	drawStart = 0;
 		int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-		if(drawEnd >= SCREEN_HEIGHT) 
-			drawEnd = SCREEN_HEIGHT - 1;
+		// if(drawEnd >= SCREEN_HEIGHT) 
+		// 	drawEnd = SCREEN_HEIGHT - 1;
 		// unsigned int color = ft_pixel(102, 102, 255, 255);
 		// if(side == 1) 
 		// 	color = color / 2;
-		unsigned int color;
-		if (side == 0)
-			color = ft_pixel(102, 178, 255, 255);
-		else if (side == 1)
-			color = ft_pixel(102, 102, 255, 255);
-		else if (side == 2)
-			color = ft_pixel(178, 102, 255, 255);
+
+
+		// int	texnum = map[map_x][map_y] - 1;
+		double wall_x;
+		if (side == 0 || side == 2)
+			wall_x = game->player->y + perpWallDist * ray_y;
 		else
-			color = ft_pixel(204, 204, 255, 255);
+			wall_x = game->player->x + perpWallDist * ray_x;
+		wall_x -= floor(wall_x);
+		double tex_x;
+		tex_x = wall_x * (double)texture.width;
+		if((side == 0 || side == 2) && ray_x > 0)
+			tex_x = (double)texture.width - tex_x - 1.0;
+      	if((side == 1 || side == 3) && ray_y < 0)
+			tex_x = (double)texture.width - tex_x - 1.0;
+		double tex_step = (double)texture.height / (double)lineHeight;
+		
+		
+		double tex_y;
+		if (drawStart < 0)
+			tex_y = fabs((double)drawStart) * tex_step;
+		else
+			tex_y = 0;
+		unsigned int color;
+		// if (side == 0)
+		// 	color = ft_pixel(102, 178, 255, 255);
+		// else if (side == 1)
+		// 	color = ft_pixel(102, 102, 255, 255);
+		// else if (side == 2)
+		// 	color = ft_pixel(178, 102, 255, 255);
+		// else
+		// 	color = ft_pixel(204, 204, 255, 255);
 		int t = 0;
+		uint8_t *pixel;
 		while (t < SCREEN_HEIGHT)
 		{
+			// if ((int)tex_y * texture.width * 4 + (int)tex_x * 4 < 80 * 80 * 4)
 			if (t >= drawStart && t <= drawEnd)
-				mlx_put_pixel(game->img, i, t, color);
+			{
+				pixel = &texture.pixels[(int)tex_y * texture.width * 4  + (int)tex_x * 4];
+			// {
+				// printf("%d, %d, %d, %d\n", *(pixel), *(pixel + 1), *(pixel + 2), *(pixel + 3));
+				color = ft_pixel(*(pixel), *(pixel + 1), *(pixel + 2), *(pixel + 3));
+			// }
+					mlx_put_pixel(game->img, i, t, color);
+				tex_y+=tex_step;
+			}
 			else if (t < drawStart)
 				mlx_put_pixel(game->img, i, t, ft_pixel(153,255,255,255));
-			else
+			else if (t > drawEnd)
 				mlx_put_pixel(game->img, i, t, ft_pixel(160,160,160,255));
 			t++;
 		}
