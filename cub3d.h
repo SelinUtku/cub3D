@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/15 19:41:00 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/18 00:03:30 by Cutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # define SCREEN_WIDTH 1600
 # define SCREEN_HEIGHT 800
 
+
+
 typedef struct s_object
 {
 	double			x;
@@ -40,11 +42,30 @@ typedef enum e_dir
 	EA,
 }t_dir;
 
+typedef struct s_ray
+{
+	double		x;
+	double		delta_x;
+	double		y;
+	double		delta_y;
+	int			len;
+}t_ray;
+
+typedef struct s_wall
+{
+	mlx_texture_t	texture[4];
+	// mlx_texture_t	*south;
+	// mlx_texture_t	*east;
+	// mlx_texture_t	*west;
+	int				side;
+}t_wall;
+
 typedef struct s_game
 {
 	mlx_image_t	*img;
+	t_wall		wall;
+	t_ray		ray;
 	mlx_t		*mlx;
-	mlx_t		*ray_mlx;
 	t_object	*player;
 	t_dir		dir;
 	double		plane_x;
@@ -52,16 +73,11 @@ typedef struct s_game
 	mlx_image_t	*texture;
 }t_game;
 
-typedef struct s_ray
-{
-	int		x;
-	int		y;
-	int		len;
-	double	angle;
-}t_ray;
 
 void	open_image(char *str, t_game *game);
-mlx_image_t	*convert_to_image(t_game *game, char *path);
+
+void	draw_lineof_texture(t_game *game, int col, double perpWallDist);
+int	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
 
 
 #endif
