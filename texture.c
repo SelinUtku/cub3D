@@ -23,21 +23,12 @@ void	open_image(char *str, t_game *game)
 	close(fd);
 }
 
-
-mlx_texture_t	*get_texture(t_game *game, char *path)
+void	load_textures(t_game *game)
 {
-	xpm_t			*xpm;
-	mlx_image_t		*img;
-
-	open_image(path, game);
-	xpm = mlx_load_xpm42(path);
-	// if (!xpm)
-		// error_message(LOAD_XPM, game);
-	img = mlx_texture_to_image(game->mlx, &xpm->texture);
-	// if (!img)
-		// error_message(MLX_TEXTURE, game);
-	mlx_delete_xpm42(xpm);
-	return (img);
+	game->wall.texture[NO] = mlx_load_xpm42("./textures/wall.xpm42")->texture;
+	game->wall.texture[SO] = mlx_load_xpm42("./textures/ruby.xpm42")->texture;
+	game->wall.texture[WE] = mlx_load_xpm42("./textures/box3.xpm42")->texture;
+	game->wall.texture[EA] = mlx_load_xpm42("./textures/door.xpm42")->texture;
 }
 
 void	draw_lineof_texture(t_game *game, int col, double perpWallDist)

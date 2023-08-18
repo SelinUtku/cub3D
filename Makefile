@@ -12,26 +12,16 @@
 
 .SILENT:
 
-CB_SRC		=	with_vector.c texture.c
+CB_SRC		=	with_vector.c texture.c ray_casting.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
-# BONUS_SRC	=	sl_bonus/so_long.c sl_bonus/error.c sl_bonus/put_image.c\
-# 				sl_bonus/map_control.c sl_bonus/create_data.c sl_bonus/map_assets.c\
-# 				sl_bonus/directions.c sl_bonus/put_image_two.c
-# BONUS_OBJ	=	$(BONUS_SRC:.c=.o)
-
-# GNL_SRC		=	gnl/get_next_line_utils.c gnl/get_next_line.c
-# GNL_OBJ		=	$(GNL_SRC:.c=.o)
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-GLFW_LIB	=	-lglfw
+GLFW_LIB	=	-L"/opt/homebrew/Cellar/glfw/3.3.8/lib/" -lglfw
 #  -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
-# LIBFT		=	libft/
-# LIBFT_LIB	=	libft/libft.a
-
-# PRINTF		=	ftprintf/
-# PRINTF_LIB	=	ftprintf/libftprintf.a
+LIBFT		=	libft/
+LIBFT_LIB	=	libft/libft.a
 
 CC		= 	cc
 RM		=   rm -f
@@ -51,39 +41,28 @@ WHITE = \033[0;97m
 
 all:	$(NAME)
 
-$(NAME): $(CB_OBJ) $(MLX_LIB) 
-	$(CC) $(CFLAGS) $(CB_OBJ) $(MLX_LIB)  -o $(NAME) $(GLFW_LIB)
-	echo "$(GREEN)so_long compiled successfully$(DEF_COLOR)"
+$(NAME): $(LIBFT_LIB) $(CB_OBJ) $(MLX_LIB) 
+	$(CC) $(CFLAGS) $(LIBFT_LIB) $(CB_OBJ) $(MLX_LIB)  -o $(NAME) $(GLFW_LIB)
+	echo "$(GREEN)cub3D compiled successfully$(DEF_COLOR)"
 
-# $(NAME_B): $(BONUS_OBJ) $(MLX_LIB) $(LIBFT_LIB) $(PRINTF_LIB) $(GNL_OBJ)
-# 	$(CC) $(CFLAGS) $(BONUS_OBJ) $(MLX_LIB) $(LIBFT_LIB) $(PRINTF_LIB) $(GNL_OBJ) -o $(NAME_B) -I MLX42/include -lglfw -L /Users/$(USER)/brew/opt/glfw/lib/
-# 	echo "$(GREEN)so_long_bonus compiled successfully$(DEF_COLOR)"
 $(MLX_LIB):
 	cd MLX42 && cmake -B build && cd ..
 	make -C $(MLX)
 	echo "$(YELLOW)MLX42 compiled successfully$(DEF_COLOR)"
 
-# $(LIBFT_LIB):
-# 	make bonus -C $(LIBFT) && make clean -C $(LIBFT)
-# 	echo "$(GREEN)LIBFT compiled successfully$(DEF_COLOR)"
+$(LIBFT_LIB):
+	make bonus -C $(LIBFT) && make clean -C $(LIBFT)
+	echo "$(GREEN)LIBFT compiled successfully$(DEF_COLOR)"
 
-# $(PRINTF_LIB):
-# 	make -C $(PRINTF) && make clean -C $(PRINTF)
-# 	echo "$(GREEN)Printf compiled successfully$(DEF_COLOR)"
 
 clean:
 	$(RM) $(CB_OBJ)
-	# $(RM) $(GNL_OBJ)
-	# $(RM) $(BONUS_OBJ)
-	# $(RM) $(LIBFT_LIB) $(PRINTF_LIB)
+	# $(RM) $(LIBFT_LIB)
 	echo "$(MAGENTA)Object-Files are cleaned!$(DEF_COLOR)"
 
 fclean: clean
 	$(RM) $(NAME)
-	# $(RM) $(NAME_B)
 	echo "$(MAGENTA)Programs / Libraries are cleaned!$(DEF_COLOR)"
-
-# bonus: $(NAME_B)
 
 re: fclean all 
 

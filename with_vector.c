@@ -18,7 +18,6 @@ void	init_struct(t_game *game);
 void	player_position(t_game *game);
 void	draw_map(t_game *game);
 
-
 int map[18][24] = {
 				{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -39,6 +38,7 @@ int map[18][24] = {
 				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 				{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
+
 
 void ft_hook(void *param)
 {
@@ -150,6 +150,7 @@ void	init_struct(t_game *game)
 	game->player = malloc (sizeof(t_object));
 	game->dir = NO;
 	init_player_direction(game);
+	load_textures(game);
 	// game->player->angle = PI;
 }
 
@@ -178,24 +179,14 @@ void	draw_map(t_game *game)
 {
 	int		i;
 	double	camera_x;
-	int		map_x;
-	int		map_y;
+	t_coord	distance;
 
-	game->wall.texture[NO] = mlx_load_xpm42("./textures/wall.xpm42")->texture;
-	game->wall.texture[SO] = mlx_load_xpm42("./textures/ruby.xpm42")->texture;
-	game->wall.texture[WE] = mlx_load_xpm42("./textures/box3.xpm42")->texture;
-	game->wall.texture[EA] = mlx_load_xpm42("./textures/door.xpm42")->texture;
-	// game->texture = convert_to_image(game, "/Users/sutku/Projects/cub3d/wall.xpm42");
 	i = -1;
 	while(++i < SCREEN_WIDTH)
 	{
 		camera_x = 2 * i / (double)SCREEN_WIDTH - 1;
 		game->ray.x = game->player->dir_x + game->plane_x * camera_x;
 		game->ray.y = game->player->dir_y + game->plane_y * camera_x;
-		map_x = (int)(game->player->x);
-		map_y = (int)(game->player->y);
-		double sideDistX;
-		double sideDistY;
 		if (game->ray.x == 0)
 			game->ray.delta_x = 1e30;
 		else
@@ -204,100 +195,11 @@ void	draw_map(t_game *game)
 			game->ray.delta_y = 1e30;
 		else
 			game->ray.delta_y = fabs(1 / game->ray.y);
-		double perpWallDist;
-		int stepX;
-		int stepY;
-
-		int hit = 0;
-		// int side;
-		if (game->ray.x < 0)
-		{
-			stepX = -1;
-			sideDistX = (game->player->x - map_x) * game->ray.delta_x;
-		}
-		else
-		{
-			stepX = 1;
-			sideDistX = (map_x + 1.0 - game->player->x) * game->ray.delta_x;
-		}
-		if (game->ray.y < 0)
-		{
-			stepY = -1;
-			sideDistY = (game->player->y - map_y) * game->ray.delta_y;
-		}
-		else
-		{
-			stepY = 1;
-			sideDistY = (map_y + 1.0 - game->player->y) * game->ray.delta_y;
-		}
-		while(hit == 0)
-		{
-			if(sideDistX < sideDistY)
-			{
-				sideDistX += game->ray.delta_x;
-				map_x += stepX;
-				if (game->ray.x > 0)
-					game->wall.side = 0;
-				else
-					game->wall.side = 2;
-			}
-			else
-			{
-				sideDistY += game->ray.delta_y;
-				map_y += stepY;
-				if (game->ray.y > 0)
-					game->wall.side = 1;
-				else
-					game->wall.side = 3;
-			}
-			if(map[map_x][map_y] == 1)
-				hit = 1;
-		}
-		if(game->wall.side == 0 || game->wall.side == 2)
-			perpWallDist = (sideDistX - game->ray.delta_x);
-		else if (game->wall.side == 1 || game->wall.side == 3)
-			perpWallDist = (sideDistY - game->ray.delta_y);
-		draw_lineof_texture(game, i, perpWallDist);
-		// int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
-		// int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
-		// int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-		// double wall_x;
-		// if (side == 0 || side == 2)
-		// 	wall_x = game->player->y + perpWallDist * ray_y;
-		// else
-		// 	wall_x = game->player->x + perpWallDist * game->ray.x;
-		// wall_x -= floor(wall_x);
-		// double tex_x;
-		// tex_x = wall_x * (double)texture.width;
-		// if((side == 0 || side == 2) && ray_x > 0)
-		// 	tex_x = (double)texture.width - tex_x - 1.0;
-      	// if((side == 1 || side == 3) && ray_y < 0)
-		// 	tex_x = (double)texture.width - tex_x - 1.0;
-		// double tex_step = (double)texture.height / (double)lineHeight;
-		// double tex_y;
-		// if (drawStart < 0)
-		// 	tex_y = fabs((double)drawStart) * tex_step;
-		// else
-		// 	tex_y = 0;
-		// unsigned int color;
-		// int t = 0;
-		// uint8_t *pixel;
-		// while (t < SCREEN_HEIGHT)
-		// {
-		// 	// if ((int)tex_y * texture.width * 4 + (int)tex_x * 4 < 80 * 80 * 4)
-		// 	if (t >= drawStart && t <= drawEnd)
-		// 	{
-		// 		pixel = &texture.pixels[(int)tex_y * texture.width * 4  + (int)tex_x * 4];
-		// 		color = ft_pixel(*(pixel), *(pixel + 1), *(pixel + 2), *(pixel + 3));
-		// 			mlx_put_pixel(game->img, i, t, color);
-		// 		tex_y+=tex_step;
-		// 	}
-		// 	else if (t < drawStart)
-		// 		mlx_put_pixel(game->img, i, t, ft_pixel(153, 255, 255, 255));
-		// 	else if (t > drawEnd)
-		// 		mlx_put_pixel(game->img, i, t, ft_pixel(160, 160, 160, 255));
-		// 	t++;
-		// }
+		distance = dda(game);
+		if(game->wall.side % 2 == 0)
+			draw_lineof_texture(game, i, distance.x - game->ray.delta_x);
+		else if (game->wall.side % 2 != 0)
+			draw_lineof_texture(game, i, distance.y - game->ray.delta_y);
 	}
 }
 

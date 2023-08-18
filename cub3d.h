@@ -14,6 +14,7 @@
 # define CUB3D_H
 
 # include "MLX42/include/MLX42/MLX42.h"
+# include "./libft/libft.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -23,7 +24,6 @@
 # define PI 3.14159265359
 # define SCREEN_WIDTH 1600
 # define SCREEN_HEIGHT 800
-
 
 
 typedef struct s_object
@@ -41,6 +41,12 @@ typedef enum e_dir
 	WE,
 	EA,
 }t_dir;
+
+typedef struct s_coord
+{
+	double	x;
+	double	y;
+}t_coord;
 
 typedef struct s_ray
 {
@@ -63,6 +69,7 @@ typedef struct s_wall
 typedef struct s_game
 {
 	mlx_image_t	*img;
+	char		**map;
 	t_wall		wall;
 	t_ray		ray;
 	mlx_t		*mlx;
@@ -78,6 +85,8 @@ void	open_image(char *str, t_game *game);
 
 void	draw_lineof_texture(t_game *game, int col, double perpWallDist);
 int	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
+t_coord    dda(t_game *game);
+void	load_textures(t_game *game);
 
 
 #endif
