@@ -3,22 +3,22 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+         #
+#    By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/12 17:03:42 by sutku             #+#    #+#              #
-#    Updated: 2023/08/17 21:37:55 by Cutku            ###   ########.fr        #
+#    Updated: 2023/08/19 15:48:18 by sutku            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .SILENT:
 
-CB_SRC		=	with_vector.c texture.c ray_casting.c
+CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-GLFW_LIB	=	-L"/opt/homebrew/Cellar/glfw/3.3.8/lib/" -lglfw
+GLFW_LIB	=	-lglfw
 #  -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
 LIBFT		=	libft/
 LIBFT_LIB	=	libft/libft.a
@@ -53,7 +53,6 @@ $(MLX_LIB):
 $(LIBFT_LIB):
 	make bonus -C $(LIBFT) && make clean -C $(LIBFT)
 	echo "$(GREEN)LIBFT compiled successfully$(DEF_COLOR)"
-
 
 clean:
 	$(RM) $(CB_OBJ)

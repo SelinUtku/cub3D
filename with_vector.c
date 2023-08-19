@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   with_vector.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 17:11:57 by Cutku             #+#    #+#             */
-/*   Updated: 2023/08/18 00:01:39 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/19 22:26:09 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,14 +144,23 @@ void	init_player_direction(t_game *game)
 	}
 }
 
+
+
 void	init_struct(t_game *game)
 {
 	game->mlx = NULL;
 	game->player = malloc (sizeof(t_object));
 	game->dir = NO;
+	// game->f_color = malloc (sizeof(t_color));
+	// game->c_color = malloc (sizeof(t_color));
+	game->wall.no = 0;
+	game->wall.so = 0;
+	game->wall.we = 0;
+	game->wall.ea = 0;
+	game->f = 0;
+	game->c = 0;
 	init_player_direction(game);
-	load_textures(game);
-	// game->player->angle = PI;
+	// load_textures(game);
 }
 
 void	player_position(t_game *game)
@@ -230,6 +239,8 @@ int	main(int argc, char **argv)
 		return(EXIT_FAILURE);
 	}
 	player_position(game);
+	char **str = parse_the_map(game, "./map.cub");
+	check_validity_of_input(game, str);
 	draw_map(game);
 	mlx_loop_hook(game->mlx, ft_hook, game);
 	// mlx_key_hook(game->mlx, ft_hook, game);
