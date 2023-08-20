@@ -5,12 +5,11 @@
 NO ./textures/wall.xpm42
 SO ./textures/ruby.xpm42
 WE ./textures/box3.xpm42
-EA ./textures/door.xpm42
+EA       ./textures/door.xpm42        
 
 
-F 220,100,0
-C 225,30,0
-
+C    225,30,0
+F         220   ,100   ,   0
 
 
 
