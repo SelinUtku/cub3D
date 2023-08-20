@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/19 22:59:55 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/20 17:08:36 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,20 @@
 # include <math.h>
 # include <sys/time.h>
 # include <fcntl.h>
+
 # define PI 3.14159265359
 # define SCREEN_WIDTH 1600
 # define SCREEN_HEIGHT 800
-
+# define MORE_ELEMENT "It is not two element in one line !"
+# define FILE "File can not open !"
+# define D_C "Direction or color element is not valid !"
+# define F_C "F or C is not exist !"
+# define RGB_COLOR "RGB color is missing or more than valid !"
 
 typedef struct s_object
 {
-	double			x;
-	double			y;
+	double		x;
+	double		y;
 	double		dir_x;
 	double		dir_y;
 }t_object;
@@ -56,7 +61,6 @@ typedef	struct s_color
 	int	g;
 	int	b;
 }t_color;
-
 
 typedef struct s_ray
 {

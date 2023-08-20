@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/19 23:10:25 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/20 17:08:25 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	free_double_char_arr(char **str);
 void	check_validity_of_input(t_game *game, char **str);
 char 	*delete_slash_n(char *str);
 bool	is_valid_rgb(char *str);
-
+void	error_message_wrong_input(t_game *game, char **temp, char **str, char *msg);
 
 bool	is_valid_rgb(char *str)
 {
@@ -93,11 +93,11 @@ char	**parse_the_map(t_game *game, char *path)
 	input = malloc(sizeof(char *) * 7);
 	fd = open (path, O_RDONLY);
 	if (fd < 0)
-		ft_putstr_fd("File can not open\n", 2);
+		ft_putendl_fd("FILE", 2);
 	id = 0;
 	str = get_next_line(fd);
 	if (!str)
-		exit(1); // map is empty
+		exit(EXIT_FAILURE); // map is empty
 	while (str && id < 6)
 	{
 		i = 0;
@@ -166,27 +166,15 @@ bool	floor_and_ceiling_color(t_game *game, char **str)
 		game->c++;
 	}
 	else
-	{
-		ft_putendl_fd("F or C is nor exist !", 2);
-		// free_double_char_arr(str);
-		return (false);
-	}
+		return (ft_putendl_fd(F_C, 2), false);
 	temp = ft_split(str[1], ',');
+	if (!temp)
+		return (ft_putendl_fd("Error", 2), false);
 	if (len_of_double_array(temp) != 3)
-	{
-		ft_putendl_fd("RGB color is missing or more than valid !", 2);
-		free_double_char_arr(temp);
-		// free_double_char_arr(str);
-		return (false);
-	}
+		return (ft_putendl_fd(RGB_COLOR, 2), free_double_char_arr(temp), false);
 	if (!r_g_b_control(temp[0], temp[1], temp[2], color))
-	{
-		free_double_char_arr(temp);
-		// free_double_char_arr(str);
-		return (false);
-	}
-	free_double_char_arr(temp);
-	return (true);
+		return (free_double_char_arr(temp), false);
+	return (free_double_char_arr(temp), true);
 }
 
 void	match_direction_and_texture(t_game *game, char *str, char *path)
@@ -250,31 +238,24 @@ void	check_validity_of_input(t_game *game, char **str)
 	while (str[id])
 	{
 		temp = ft_split(str[id], ' ');
+		if (!temp)
+			error_message_wrong_input(game, NULL, str, "Error");
 		if (len_of_double_array(temp) != 2)
-		{
-			ft_putendl_fd("More than two element in one line !", 2);// freeler unutma her exittan sonra
-			exit(EXIT_FAILURE);
-		}
+			error_message_wrong_input(game, temp, str, MORE_ELEMENT);
 		if (check_direction_identifiers(temp[0]) == true)
 		{
 			temp[1] = delete_slash_n(temp[1]);
 			fd = open(temp[1], O_RDONLY);
 			if (fd < 0)
-			{
-				ft_putendl_fd("Texture can not open !", 2);
-				exit(EXIT_FAILURE);
-			}
+				error_message_wrong_input(game, temp, str, FILE);
 			match_direction_and_texture(game, temp[0], temp[1]);
 		}
 		else
 		{
 			if (check_color_identifiers(temp[0]) == false)
-			{
-				ft_putendl_fd("Direction or color is not valid !", 2);
-				exit(EXIT_FAILURE);
-			}
+				error_message_wrong_input(game, temp, str, D_C);
 			if (floor_and_ceiling_color(game, temp) == false)
-				exit(EXIT_FAILURE);
+				error_message_wrong_input(game, temp, str, NULL);
 		}
 		free_double_char_arr(temp);
 		id++;
@@ -283,7 +264,7 @@ void	check_validity_of_input(t_game *game, char **str)
 	free_double_char_arr(str);
 }
 
-char *delete_slash_n(char *str)
+char	*delete_slash_n(char *str)
 {
 	int		len;
 	char	*s;
@@ -292,7 +273,7 @@ char *delete_slash_n(char *str)
 	len = ft_strlen(str);
 	s = malloc(sizeof(char) * len + 1);
 	i = 0;
-	while (str[i] != '\n')
+	while (str[i] != '\n' && str[i] != '\0')
 	{
 		s[i] = str[i];
 		i++;
@@ -300,4 +281,13 @@ char *delete_slash_n(char *str)
 	s[i] = '\0';
 	free(str);
 	return (s);
+}
+
+void	error_message_wrong_input(t_game *game, char **temp, char **str, char *msg)
+{
+	free_double_char_arr(temp);
+	free_double_char_arr(str);
+	//free all
+	ft_putendl_fd(msg, 2);// freeler unutma her exittan sonra
+	exit(EXIT_FAILURE);
 }
