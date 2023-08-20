@@ -6,19 +6,19 @@
 #    By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/12 17:03:42 by sutku             #+#    #+#              #
-#    Updated: 2023/08/17 21:37:55 by Cutku            ###   ########.fr        #
+#    Updated: 2023/08/19 20:34:37 by Cutku            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .SILENT:
 
-CB_SRC		=	with_vector.c texture.c ray_casting.c
+CB_SRC		=	with_vector.c texture.c ray_casting.c key_control.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-GLFW_LIB	=	-L"/opt/homebrew/Cellar/glfw/3.3.8/lib/" -lglfw
+GLFW_LIB	=	-lglfw
 #  -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
 LIBFT		=	libft/
 LIBFT_LIB	=	libft/libft.a
