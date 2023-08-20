@@ -6,13 +6,12 @@
 #    By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/12 17:03:42 by sutku             #+#    #+#              #
-#    Updated: 2023/08/19 15:48:18 by sutku            ###   ########.fr        #
-#                                                                              #
+#    Updated: 2023/08/19 15:48:18 by sutku            ###   ########.fr        #                                                               #
 # **************************************************************************** #
 
 .SILENT:
 
-CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c
+CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c key_control.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 
