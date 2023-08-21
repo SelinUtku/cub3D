@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 00:42:01 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/21 23:03:10 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # define RGB_COLOR "RGB color is missing or more than valid !"
 # define ROT_SPEED 0.0174533
 # define MOVE_SPEED 0.1
+# define MAP_CONTENT "10NSWE"
 
 typedef struct s_object
 {
@@ -107,6 +108,8 @@ char    **parse_the_map(t_game *game, char *path);
 void	check_validity_of_input(t_game *game, char **str);
 void	draw_map(t_game *game);
 bool	is_floor_or_ceiling(t_game *game, char *str);
+void	read_the_map(t_game *game, int fd);
+void	is_valid_map(t_game *game);
 
 //help functions
 int		ft_isspace(char a);

@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:07 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 00:42:45 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/21 20:07:00 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ void	match_direction_and_texture(t_game *game, char *str, char *path);
 void	check_validity_of_input(t_game *game, char **str);
 bool	is_valid_rgb(char *str);
 bool 	is_it_direction_or_color(t_game *game, char *str);
+
+
+
+
+
 bool	is_valid_rgb(char *str)
 {
 	int	i;
@@ -51,9 +56,12 @@ char	**parse_the_map(t_game *game, char *path)
 	char	**input;
 
 	input = malloc(sizeof(char *) * 7);
-	fd = open (path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd < 0)
+	{
 		ft_putendl_fd("FILE", 2);
+		exit (EXIT_FAILURE);	
+	}
 	id = 0;
 	str = get_next_line(fd);
 	if (!str)
@@ -81,6 +89,7 @@ char	**parse_the_map(t_game *game, char *path)
 		free_double_char_arr(input);
 		exit(EXIT_FAILURE);
 	}
+	read_the_map(game, fd);
 	return (input);
 }
 
@@ -222,6 +231,11 @@ void	direction_operations(t_game *game, char *str, char *dir)
 	if (!path)
 	{
 		ft_putendl_fd("no texture path", 2);
+		exit(EXIT_FAILURE);
+	}
+	if (ft_strcmp(path + len - 6, ".xpm42"))
+	{
+		ft_putendl_fd("Texture type is not .xpm42 !", 2);
 		exit(EXIT_FAILURE);
 	}
 	fd = open(path, O_RDONLY);
