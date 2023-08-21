@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/13 17:11:57 by Cutku             #+#    #+#             */
-/*   Updated: 2023/08/19 22:26:09 by sutku            ###   ########.fr       */
+/*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
+/*   Updated: 2023/08/21 23:17:55 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "cub3d.h"
 
@@ -93,7 +94,7 @@ void	init_struct(t_game *game)
 	game->wall.ea = 0;
 	game->f = 0;
 	game->c = 0;
-	game->dir = WE;
+	game->dir = -1;
 	init_player_direction(game);
 	// load_textures(game);
 }
@@ -175,10 +176,10 @@ int	main(int argc, char **argv)
 	player_position(game);
 	char **str = parse_the_map(game, "./map.cub");
 	check_validity_of_input(game, str);
-	draw_map(game);
-	mlx_loop_hook(game->mlx, ft_hook, game);
-	// mlx_key_hook(game->mlx, ft_hook, game);
-	mlx_loop(game->mlx);
-	mlx_terminate(game->mlx);
+	is_valid_map(game);
+	// draw_map(game);
+	// mlx_loop_hook(game->mlx, ft_hook, game);
+	// mlx_loop(game->mlx);
+	// mlx_terminate(game->mlx);
 	return (EXIT_SUCCESS);
 }
