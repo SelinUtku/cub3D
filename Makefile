@@ -18,7 +18,7 @@ CB_OBJ		=	$(CB_SRC:.c=.o)
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-GLFW_LIB	=	-lglfw
+GLFW_LIB	=	-L"/opt/homebrew/Cellar/glfw/3.3.8/lib/" -lglfw
 #  -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
 LIBFT		=	libft/
 LIBFT_LIB	=	libft/libft.a

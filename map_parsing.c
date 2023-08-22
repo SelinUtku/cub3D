@@ -30,7 +30,7 @@ char	*delete_slash_n(char *str)
 	free(str);
 	return (s);
 }
-
+// delete fonksiyon cagrilirken str a uygulanabilir
 void	add_line_to_map(t_game *game, char *str, int line)
 {
 	char	**temp;
@@ -112,11 +112,10 @@ void	read_the_map(t_game *game, int fd)
 		i = 0;
 		while (ft_isspace(str[i]))
 			i++;
-		if (str[i] != '\n')
+		if (str[i] != '\n' && str[i] != '\0')
 		{
-			game->map[0] = str;
-			game->map[1] = NULL;
 			line = 1;
+			add_line_to_map(game, str, line);
 			break ;
 		}
 		else
@@ -125,21 +124,39 @@ void	read_the_map(t_game *game, int fd)
 	}
 	while (str)
 	{
-		i = 0;
 		str = get_next_line(fd);
-		if (str[i] != '\n')
+		if (str)
 		{
 			line++;
 			add_line_to_map(game, str, line);
 		}
-		else
-		{
-			free(str);
-			break ;
-		}
+		// if (str[i] != '\n')
+		// {
+		// 	line++;
+		// 	add_line_to_map(game, str, line);
+		// }
+		// else
+		// {
+		// 	free(str);
+		// 	break ;
+		// }
 	}
-///// ortadan ikiye boldugunde eger son line komple 1 se harita gecerli sayilir bu sekilde 
-//// sonrasinda hala line var mi bakmak lazim sanki
+		// i = 0;
+		// while (game->map[i])
+		// {
+		// 	printf("%s len = %d\n", game->map[i], ft_strlen(game->map[i]));
+		// 	i++;
+		// }
+}
+
+bool	check_valid_chracters(char c)
+{
+	if (c == '1' || c == '0')
+		return (true);
+	else if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
+		return (true);
+	else
+		return (false);
 }
 
 
@@ -175,20 +192,34 @@ void	is_valid_map(t_game *game)
 		j = 0;
 		while (ft_isspace(game->map[i][j]))
 			j++;
-		while (ft_strchr(MAP_CONTENT, game->map[i][j]))
+		while (game->map[i][j] != '\0')
 		{
-			find_player_direction(game, game->map[i][j]);
+			if (!check_valid_chracters(game->map[i][j]))
+			{
+				if (game->map[i][j] != '\0')
+				{
+					while (ft_isspace(game->map[i][j]))
+						j++;
+					if (game->map[i][j] != '\0')
+					{
+						printf("\n%d\n", game->map[i][j]);
+						ft_putendl_fd("Invalid character !", 2);
+						exit (EXIT_FAILURE);
+
+					}
+					else
+						break ;
+				}
+			}
+			else
+				find_player_direction(game, game->map[i][j]);
+			// printf("%c", game->map[i][j]);
 			j++;
-		}
-		printf("%d\n", game->map[i][j - 1]);
-		if (!ft_strchr(MAP_CONTENT, game->map[i][j]))
-		{
-			ft_putendl_fd("Invalid character !", 2);
-			exit (EXIT_FAILURE);
 		}
 		i++;
 	} 
 	// check_player_direction_exist(game);
 	// check_walls_horizantal(game);
 	// check_walls_vertical(game);
+	// iceride bosluk varsayi kontrol edemiyorum
 }
