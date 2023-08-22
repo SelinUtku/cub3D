@@ -92,6 +92,7 @@ void	init_struct(t_game *game)
 	game->wall.so = 0;
 	game->wall.we = 0;
 	game->wall.ea = 0;
+	game->map = NULL;
 	game->f = 0;
 	game->c = 0;
 	game->dir = -1;
