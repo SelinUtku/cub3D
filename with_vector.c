@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 23:17:55 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/23 00:54:18 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,6 @@ void	init_struct(t_game *game)
 	game->mlx = NULL;
 	game->player = malloc (sizeof(t_object));
 	game->dir = NO;
-	// game->f_color = malloc (sizeof(t_color));
-	// game->c_color = malloc (sizeof(t_color));
 	game->wall.no = 0;
 	game->wall.so = 0;
 	game->wall.we = 0;

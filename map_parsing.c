@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 18:11:16 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/22 00:56:01 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/23 00:56:41 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*delete_slash_n(char *str)
 	free(str);
 	return (s);
 }
-// delete fonksiyon cagrilirken str a uygulanabilir
+
 void	add_line_to_map(t_game *game, char *str, int line)
 {
 	char	**temp;
@@ -41,10 +41,10 @@ void	add_line_to_map(t_game *game, char *str, int line)
 	i = 0;
 	while (temp && temp[i])
 	{
-		game->map[i] = delete_slash_n(temp[i]);
+		game->map[i] = temp[i];
 		i++;
 	}
-	game->map[i] = delete_slash_n(str);
+	game->map[i] = str;
 	game->map[i + 1] = NULL;
 	free(temp);
 }
@@ -96,7 +96,6 @@ void	check_walls_vertical(t_game *game)
 	}
 }
 
-
 void	read_the_map(t_game *game, int fd)
 {
 	char	*str;
@@ -115,7 +114,8 @@ void	read_the_map(t_game *game, int fd)
 		if (str[i] != '\n' && str[i] != '\0')
 		{
 			line = 1;
-			add_line_to_map(game, str, line);
+			game->map[0] = delete_slash_n(str);
+			game->map[1] = NULL;
 			break ;
 		}
 		else
@@ -128,18 +128,8 @@ void	read_the_map(t_game *game, int fd)
 		if (str)
 		{
 			line++;
-			add_line_to_map(game, str, line);
+			add_line_to_map(game, delete_slash_n(str), line);
 		}
-		// if (str[i] != '\n')
-		// {
-		// 	line++;
-		// 	add_line_to_map(game, str, line);
-		// }
-		// else
-		// {
-		// 	free(str);
-		// 	break ;
-		// }
 	}
 		// i = 0;
 		// while (game->map[i])
@@ -154,6 +144,8 @@ bool	check_valid_chracters(char c)
 	if (c == '1' || c == '0')
 		return (true);
 	else if (c == 'N' || c == 'S' || c == 'E' || c == 'W')
+		return (true);
+	else if (c == ' ')
 		return (true);
 	else
 		return (false);
@@ -190,35 +182,19 @@ void	is_valid_map(t_game *game)
 	while (game->map[i])
 	{
 		j = 0;
-		while (ft_isspace(game->map[i][j]))
-			j++;
 		while (game->map[i][j] != '\0')
 		{
 			if (!check_valid_chracters(game->map[i][j]))
 			{
-				if (game->map[i][j] != '\0')
-				{
-					while (ft_isspace(game->map[i][j]))
-						j++;
-					if (game->map[i][j] != '\0')
-					{
-						printf("\n%d\n", game->map[i][j]);
-						ft_putendl_fd("Invalid character !", 2);
-						exit (EXIT_FAILURE);
-
-					}
-					else
-						break ;
-				}
+				ft_putendl_fd("Invalid character !", 2);
+				exit (EXIT_FAILURE);
 			}
-			else
-				find_player_direction(game, game->map[i][j]);
-			// printf("%c", game->map[i][j]);
+			find_player_direction(game, game->map[i][j]);
 			j++;
 		}
 		i++;
 	} 
-	// check_player_direction_exist(game);
+	check_player_direction_exist(game);
 	// check_walls_horizantal(game);
 	// check_walls_vertical(game);
 	// iceride bosluk varsayi kontrol edemiyorum
