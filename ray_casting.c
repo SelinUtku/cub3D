@@ -1,16 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   texture.c                                          :+:      :+:    :+:   */
+/*   ray_casting.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/18 00:01:01 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/21 20:49:22 by Cutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+void	check_wall_hit(t_game *game, t_coord *dda);
 
 int map2[18][24] = {
 				{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -33,59 +35,55 @@ int map2[18][24] = {
 				{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
-t_coord    dda(t_game *game)
+t_coord	dda(t_game *game)
 {
-    int stepX;
-    int stepY;
-    int map_x;
-    int map_y;
-    int hit = 0;
-    t_coord distance;
+	t_coord	dda;
 
-    map_x = (int)(game->player->x);
-	map_y = (int)(game->player->y);
-    if (game->ray.x < 0)
-    {
-        stepX = -1;
-        distance.x = (game->player->x - map_x) * game->ray.delta_x;
-    }
-    else
-    {
-        stepX = 1;
-        distance.x = (map_x + 1.0 - game->player->x) * game->ray.delta_x;
-    }
-    if (game->ray.y < 0)
-    {
-        stepY = -1;
-        distance.y = (game->player->y - map_y) * game->ray.delta_y;
-    }
-    else
-    {
-        stepY = 1;
-        distance.y = (map_y + 1.0 - game->player->y) * game->ray.delta_y;
-    }
-    while(hit == 0)
-    {
-        if(distance.x < distance.y)
-        {
-            distance.x += game->ray.delta_x;
-            map_x += stepX;
-            if (game->ray.x > 0)
-                game->wall.side = 0;
-            else
-                game->wall.side = 2;
-        }
-        else
-        {
-            distance.y += game->ray.delta_y;
-            map_y += stepY;
-            if (game->ray.y > 0)
-                game->wall.side = 1;
-            else
-                game->wall.side = 3;
-        }
-        if(map2[map_x][map_y] == 1)
-            hit = 1;
-    }
-    return (distance);
+	dda.map_x = (int)(game->player->x);
+	dda.map_y = (int)(game->player->y);
+	dda.step_x = 1;
+	dda.step_y = 1;
+	if (game->ray.x * dda.step_x < 0)
+	{
+		dda.step_x = -dda.step_x;
+		dda.x = (game->player->x - dda.map_x) * game->ray.delta_x;
+	}
+	else
+		dda.x = (dda.map_x + 1.0 - game->player->x) * game->ray.delta_x;
+	if (game->ray.y * dda.step_y < 0)
+	{
+		dda.step_y = -dda.step_y;
+		dda.y = (game->player->y - dda.map_y) * game->ray.delta_y;
+	}
+	else
+		dda.y = (dda.map_y + 1.0 - game->player->y) * game->ray.delta_y;
+	check_wall_hit(game, &dda);
+	return (dda);
+}
+
+void	check_wall_hit(t_game *game, t_coord *dda)
+{
+	while (true)
+	{
+		if (dda->x < dda->y)
+		{
+			dda->x += game->ray.delta_x;
+			dda->map_x += dda->step_x;
+			if (game->ray.x > 0)
+				game->wall.side = 0;
+			else
+				game->wall.side = 2;
+		}
+		else
+		{
+			dda->y += game->ray.delta_y;
+			dda->map_y += dda->step_y;
+			if (game->ray.y > 0)
+				game->wall.side = 1;
+			else
+				game->wall.side = 3;
+		}
+		if (map2[dda->map_x][dda->map_y] == 1)
+			break ;
+	}
 }

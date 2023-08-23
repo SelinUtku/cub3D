@@ -6,7 +6,7 @@
 /*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 20:33:18 by Cutku             #+#    #+#             */
-/*   Updated: 2023/08/19 20:35:20 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/23 21:10:51 by Cutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	keypress_left_right(t_game *game)
 	delta_y = game->player->dir_x * MOVE_SPEED;
 	if (mlx_is_key_down(game->mlx, MLX_KEY_A))
 	{
-		if (map3[(int)(game->player->x + delta_x)][(int)game->player->y] != 1) 
+		if (map3[(int)(game->player->x + delta_x)][(int)game->player->y] != 1)
 			game->player->x += delta_x;
 		if (map3[(int)game->player->x][(int)(game->player->y - delta_y)] != 1)
 			game->player->y -= delta_y;
@@ -75,7 +75,7 @@ void	keypress_left_right(t_game *game)
 	}
 	if (mlx_is_key_down(game->mlx, MLX_KEY_D))
 	{
-		if (map3[(int)(game->player->x - delta_x)][(int)game->player->y] != 1) 
+		if (map3[(int)(game->player->x - delta_x)][(int)game->player->y] != 1)
 			game->player->x -= delta_x;
 		if (map3[(int)game->player->x][(int)(game->player->y + delta_y)] != 1)
 			game->player->y += delta_y;
