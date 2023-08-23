@@ -5,33 +5,31 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/20 17:08:25 by sutku            ###   ########.fr       */
+/*   Created: 2023/08/20 17:19:07 by sutku             #+#    #+#             */
+/*   Updated: 2023/08/23 00:49:51 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "cub3d.h"
 
-int	ft_isspace(char a);
-int	ft_strcmp(char *str1, char *str2);
-int	len_of_double_array(char **str);
 char	**parse_the_map(t_game *game, char *path);
-bool	check_direction_identifiers(char *str);
-bool	check_color_identifiers(char *str);
-bool	floor_and_ceiling_color(t_game *game, char **str);
+bool	floor_and_ceiling_color(t_game *game, char *str, t_color *color);
 void	match_direction_and_texture(t_game *game, char *str, char *path);
-void	free_double_char_arr(char **str);
 void	check_validity_of_input(t_game *game, char **str);
-char 	*delete_slash_n(char *str);
 bool	is_valid_rgb(char *str);
-void	error_message_wrong_input(t_game *game, char **temp, char **str, char *msg);
+bool 	is_it_direction_or_color(t_game *game, char *str);
+
+
+
+
 
 bool	is_valid_rgb(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (str[i] != '\0' && str[i] != '\n')
+	while (str[i] != '\0' && str[i] != '\n' && str[i] != ' ')
 	{
 		if (str[i] < '0' || str[i] > '9')
 		{
@@ -49,39 +47,6 @@ bool	is_valid_rgb(char *str)
 	return (true);
 }
 
-int	ft_isspace(char a)
-{
-	if (a == 32 || a == 9)
-		return (1);
-	return (0);
-}
-
-int	ft_strcmp(char *str1, char *str2)
-{
-	int	i;
-
-	i = 0;
-	if (!str1 || !str2)
-		return (1);
-	while (str1[i] && str2[i])
-	{
-		if (str1[i] != str2[i])
-			break ;
-		i++;
-	}
-	return ((str1[i] - str2[i]) != 0);
-}
-
-int	len_of_double_array(char **str)
-{
-	int	len;
-
-	len = 0;
-	while(str[len])
-		len++;
-	return(len);
-}
-
 char	**parse_the_map(t_game *game, char *path)
 {
 	int		fd;
@@ -91,13 +56,16 @@ char	**parse_the_map(t_game *game, char *path)
 	char	**input;
 
 	input = malloc(sizeof(char *) * 7);
-	fd = open (path, O_RDONLY);
+	fd = open(path, O_RDONLY);
 	if (fd < 0)
+	{
 		ft_putendl_fd("FILE", 2);
+		exit (EXIT_FAILURE);	
+	}
 	id = 0;
 	str = get_next_line(fd);
 	if (!str)
-		exit(EXIT_FAILURE); // map is empty
+		exit (EXIT_FAILURE); // map is empty
 	while (str && id < 6)
 	{
 		i = 0;
@@ -109,7 +77,7 @@ char	**parse_the_map(t_game *game, char *path)
 			id++;
 		}
 		else
-			free (str);
+			free(str);
 		str = get_next_line(fd);
 	}
 	input[id] = NULL;
@@ -121,21 +89,8 @@ char	**parse_the_map(t_game *game, char *path)
 		free_double_char_arr(input);
 		exit(EXIT_FAILURE);
 	}
+	read_the_map(game, fd);
 	return (input);
-}
-
-bool	check_direction_identifiers(char *str)
-{
-	if (!ft_strcmp("NO", str) || !ft_strcmp("SO", str) || !ft_strcmp("WE", str) || !ft_strcmp("EA", str))
-		return (true);
-	return (false);
-}
-
-bool	check_color_identifiers(char *str)
-{
-	if (!ft_strcmp("F", str) || !ft_strcmp("C", str))
-		return (true);
-	return (false);
 }
 
 bool	r_g_b_control(char *s1, char *s2, char *s3, t_color *color)
@@ -145,29 +100,17 @@ bool	r_g_b_control(char *s1, char *s2, char *s3, t_color *color)
 		color->r = ft_atoi(s1);
 		color->g = ft_atoi(s2);
 		color->b = ft_atoi(s3);
+		// printf("r = %d g = %d b = %d\n", color->r, color->g , color->b);
 		return (true);
 	}
 	return (false);
 }
 
-bool	floor_and_ceiling_color(t_game *game, char **str)
+bool	floor_and_ceiling_color(t_game *game, char *str, t_color *color)
 {
 	char	**temp;
-	t_color	*color;
 
-	if (!ft_strcmp("F", str[0]))
-	{
-		color = &game->f_color;
-		game->f++;
-	}
-	else if (!ft_strcmp("C", str[0]))
-	{
-		color = &game->c_color;
-		game->c++;
-	}
-	else
-		return (ft_putendl_fd(F_C, 2), false);
-	temp = ft_split(str[1], ',');
+	temp = ft_split(str, ',');
 	if (!temp)
 		return (ft_putendl_fd("Error", 2), false);
 	if (len_of_double_array(temp) != 3)
@@ -201,19 +144,6 @@ void	match_direction_and_texture(t_game *game, char *str, char *path)
 	}
 }
 
-void	free_double_char_arr(char **str)
-{
-	int	i;
-
-	i = 0;
-	while (str && str[i])
-	{
-		free(str[i]);
-		i++;
-	}
-	free(str);
-}
-
 void	check_number_of_elements(t_game *game)
 {
 	if (game->wall.no != 1 || game->wall.so != 1 || game->wall.ea != 1 || game->wall.we != 1)
@@ -231,63 +161,129 @@ void	check_number_of_elements(t_game *game)
 void	check_validity_of_input(t_game *game, char **str)
 {
 	int		id;
-	int		fd;
-	char	**temp;
 
 	id = 0;
 	while (str[id])
 	{
-		temp = ft_split(str[id], ' ');
-		if (!temp)
-			error_message_wrong_input(game, NULL, str, "Error");
-		if (len_of_double_array(temp) != 2)
-			error_message_wrong_input(game, temp, str, MORE_ELEMENT);
-		if (check_direction_identifiers(temp[0]) == true)
+		if (is_it_direction_or_color(game, str[id]) == false)
 		{
-			temp[1] = delete_slash_n(temp[1]);
-			fd = open(temp[1], O_RDONLY);
-			if (fd < 0)
-				error_message_wrong_input(game, temp, str, FILE);
-			match_direction_and_texture(game, temp[0], temp[1]);
+			ft_putendl_fd("Direction or color element is missing ! ", 2);
+			free_double_char_arr(str);
+			exit(EXIT_FAILURE);
 		}
-		else
-		{
-			if (check_color_identifiers(temp[0]) == false)
-				error_message_wrong_input(game, temp, str, D_C);
-			if (floor_and_ceiling_color(game, temp) == false)
-				error_message_wrong_input(game, temp, str, NULL);
-		}
-		free_double_char_arr(temp);
 		id++;
 	}
 	check_number_of_elements(game);
 	free_double_char_arr(str);
 }
 
-char	*delete_slash_n(char *str)
+bool	is_floor_or_ceiling(t_game *game, char *str)
 {
-	int		len;
-	char	*s;
 	int		i;
+	int		start;
+	char 	*temp;
+	t_color	*color;
+	int 	len;
 
-	len = ft_strlen(str);
-	s = malloc(sizeof(char) * len + 1);
 	i = 0;
-	while (str[i] != '\n' && str[i] != '\0')
-	{
-		s[i] = str[i];
+	while (ft_isspace(str[i]))
 		i++;
+	start = i;
+	if (!ft_strncmp(str + i, "F", 1))
+	{
+		color = &game->f_color;
+		game->f++;
 	}
-	s[i] = '\0';
-	free(str);
-	return (s);
+	else if (!ft_strncmp(str + i, "C", 1))
+	{
+		color = &game->c_color;
+		game->c++;
+	}
+	else
+		return (ft_putendl_fd(F_C, 2), false);
+	i++;
+	while (ft_isspace(str[i]))
+		i++;
+	if (str[i] != '\0' && str[i] != '\n')
+	{
+		len = my_strlen(str + i);
+		temp = ft_substr(str, i, len);
+		if (floor_and_ceiling_color(game, temp, color) == true)// free str
+			return (true);
+	}
+	return (false);
 }
 
-void	error_message_wrong_input(t_game *game, char **temp, char **str, char *msg)
+void	direction_operations(t_game *game, char *str, char *dir)
 {
-	free_double_char_arr(temp);
-	free_double_char_arr(str);
-	//free all
-	ft_putendl_fd(msg, 2);// freeler unutma her exittan sonra
-	exit(EXIT_FAILURE);
+	int		i;
+	int		len;
+	int		fd;
+	char	*path;
+
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	len = 0;
+	while (str[len + i] != '\0' && str[len + i] != '\n' && str[len + i] != ' ')
+		len++;
+	path = ft_substr(str, i, len);
+	if (!path)
+	{
+		ft_putendl_fd("no texture path", 2);
+		exit(EXIT_FAILURE);
+	}
+	if (ft_strcmp(path + len - 6, ".xpm42"))
+	{
+		ft_putendl_fd("Texture type is not .xpm42 !", 2);
+		exit(EXIT_FAILURE);
+	}
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+	{
+		ft_putendl_fd("File can not open", 2);
+		exit(EXIT_FAILURE);
+	}
+	match_direction_and_texture(game, dir, path);
+}
+
+bool is_it_direction_or_color(t_game *game, char *str)
+{
+	int	i;
+	int	start;
+	int	len;
+
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	start = i;
+	len = 0;
+	while (str[len + i] != ' ' && str[len + i] != '\n' && str[len + i] != '\0')
+		len++;
+	if (len == 2 && !ft_strncmp(str + start, "NO", 2))
+	{
+		direction_operations(game, str + start + 2, "NO");
+		return (true);
+	}
+	else if (len == 2 && !ft_strncmp(str + start, "SO", 2))
+	{
+		direction_operations(game, str + start + 2, "SO");
+		return (true);
+	}
+	else if (len == 2 && !ft_strncmp(str + start, "WE", 2))
+	{
+		direction_operations(game, str + start + 2, "WE");
+		return (true);
+	}
+	else if (len == 2 && !ft_strncmp(str + start, "EA", 2))
+	{
+		direction_operations(game, str + start + 2, "EA");
+		return (true);
+	}
+	else if (len == 1)
+	{
+		if (is_floor_or_ceiling(game, str) == true)
+			return (true);
+	}
+	return (false);
 }

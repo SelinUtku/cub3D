@@ -11,13 +11,14 @@
 
 .SILENT:
 
-CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c key_control.c
+CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c key_control.c help_functions.c \
+				map_parsing.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
-GLFW_LIB	=	-lglfw
+GLFW_LIB	=	 -lglfw
 #  -L"/opt/homebrew/Cellar/glfw/3.3.8/lib/"
 LIBFT		=	libft/
 LIBFT_LIB	=	libft/libft.a
