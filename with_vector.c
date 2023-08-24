@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/23 00:54:18 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/24 05:13:56 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,11 @@ void	init_struct(t_game *game)
 	game->mlx = NULL;
 	game->player = malloc (sizeof(t_object));
 	game->dir = NO;
-	game->wall.no = 0;
-	game->wall.so = 0;
-	game->wall.we = 0;
-	game->wall.ea = 0;
-	game->map = NULL;
+	game->wall.num_texture[NO] = 0;
+	game->wall.num_texture[SO] = 0;
+	game->wall.num_texture[WE] = 0;
+	game->wall.num_texture[EA] = 0;
+	game->map.map = NULL;
 	game->f = 0;
 	game->c = 0;
 	game->dir = -1;
@@ -176,9 +176,9 @@ int	main(int argc, char **argv)
 	char **str = parse_the_map(game, "./map.cub");
 	check_validity_of_input(game, str);
 	is_valid_map(game);
-	// draw_map(game);
-	// mlx_loop_hook(game->mlx, ft_hook, game);
-	// mlx_loop(game->mlx);
-	// mlx_terminate(game->mlx);
+	draw_map(game);
+	mlx_loop_hook(game->mlx, ft_hook, game);
+	mlx_loop(game->mlx);
+	mlx_terminate(game->mlx);
 	return (EXIT_SUCCESS);
 }

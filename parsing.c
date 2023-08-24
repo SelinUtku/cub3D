@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:07 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/23 00:49:51 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/24 05:11:21 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 
 char	**parse_the_map(t_game *game, char *path);
 bool	floor_and_ceiling_color(t_game *game, char *str, t_color *color);
-void	match_direction_and_texture(t_game *game, char *str, char *path);
+void	load_direction_texture(t_game *game, char *str, t_dir dir);
 void	check_validity_of_input(t_game *game, char **str);
 bool	is_valid_rgb(char *str);
 bool 	is_it_direction_or_color(t_game *game, char *str);
-
-
+bool	is_valid_direction(t_game *game, char *str);
+void	check_direction_exist(t_game *game, t_dir dir, char *path);
 
 
 
@@ -29,7 +29,7 @@ bool	is_valid_rgb(char *str)
 	int	i;
 
 	i = 0;
-	while (str[i] != '\0' && str[i] != '\n' && str[i] != ' ')
+	while (str[i] != '\0' && str[i] != ' ')
 	{
 		if (str[i] < '0' || str[i] > '9')
 		{
@@ -73,7 +73,7 @@ char	**parse_the_map(t_game *game, char *path)
 			i++;
 		if (str[i] != '\n')
 		{
-			input[id] = str;
+			input[id] = delete_slash_n(str);
 			id++;
 		}
 		else
@@ -89,7 +89,7 @@ char	**parse_the_map(t_game *game, char *path)
 		free_double_char_arr(input);
 		exit(EXIT_FAILURE);
 	}
-	read_the_map(game, fd);
+	read_the_map(game, fd);//sonra
 	return (input);
 }
 
@@ -120,36 +120,19 @@ bool	floor_and_ceiling_color(t_game *game, char *str, t_color *color)
 	return (free_double_char_arr(temp), true);
 }
 
-void	match_direction_and_texture(t_game *game, char *str, char *path)
-{
-	if (!ft_strcmp("NO", str))
-	{
-		game->wall.texture[NO] = mlx_load_xpm42(path)->texture;
-		game->wall.no++;
-	}
-	else if (!ft_strcmp("SO", str))
-	{
-		game->wall.texture[SO] = mlx_load_xpm42(path)->texture;
-		game->wall.so++;
-	}
-	else if (!ft_strcmp("WE", str))
-	{
-		game->wall.texture[WE] = mlx_load_xpm42(path)->texture;
-		game->wall.we++;
-	}
-	else if (!ft_strcmp("EA", str))
-	{
-		game->wall.texture[EA] = mlx_load_xpm42(path)->texture;
-		game->wall.ea++;
-	}
-}
 
 void	check_number_of_elements(t_game *game)
 {
-	if (game->wall.no != 1 || game->wall.so != 1 || game->wall.ea != 1 || game->wall.we != 1)
+	int	i;
+
+	while (i < 4)
 	{
-		ft_putendl_fd("Duplicate or missing direction !", 2);
-		exit(EXIT_FAILURE);
+		if (game->wall.num_texture[i] == 0)
+		{
+			ft_putendl_fd("Missing texture of direction !", 2);
+			exit(EXIT_FAILURE);
+		}
+		i++;
 	}
 	if (game->f != 1 || game->c != 1)
 	{
@@ -186,27 +169,22 @@ bool	is_floor_or_ceiling(t_game *game, char *str)
 	int 	len;
 
 	i = 0;
-	while (ft_isspace(str[i]))
-		i++;
-	start = i;
-	if (!ft_strncmp(str + i, "F", 1))
+	if (str[i] == 'F')
 	{
 		color = &game->f_color;
 		game->f++;
 	}
-	else if (!ft_strncmp(str + i, "C", 1))
+	else if (str[i] == 'C')
 	{
 		color = &game->c_color;
 		game->c++;
 	}
-	else
-		return (ft_putendl_fd(F_C, 2), false);
 	i++;
 	while (ft_isspace(str[i]))
 		i++;
-	if (str[i] != '\0' && str[i] != '\n')
+	if (str[i] != '\0')
 	{
-		len = my_strlen(str + i);
+		len = ft_strlen(str + i);
 		temp = ft_substr(str, i, len);
 		if (floor_and_ceiling_color(game, temp, color) == true)// free str
 			return (true);
@@ -214,23 +192,67 @@ bool	is_floor_or_ceiling(t_game *game, char *str)
 	return (false);
 }
 
-void	direction_operations(t_game *game, char *str, char *dir)
+bool	is_it_direction_or_color(t_game *game, char *str)
 {
+	int	start;
+	int	len;
+
+	start = 0;
+	while (ft_isspace(str[start]))
+		start++;
+	len = 0;
+	while (str[len + start] != ' ' && str[len + start] != '\0')
+		len++;
+	if (len == 2)
+		return (is_valid_direction(game, str + start));
+	else if (len == 1 && (str[start] == 'F' || str[start] == 'C'))
+		return (is_floor_or_ceiling(game, str + start));
+	return (false);
+}
+
+bool	is_valid_direction(t_game *game, char *str)
+{
+	if (ft_strncmp(str, "NO", 2) == 0)
+	{
+		game->wall.num_texture[NO]++;
+		return (load_direction_texture(game, str + 2, NO), true);
+	}
+	else if (ft_strncmp(str, "SO", 2) == 0)
+	{
+		game->wall.num_texture[SO]++;
+		return (load_direction_texture(game, str + 2, SO), true);
+	}
+	else if (ft_strncmp(str, "EA", 2) == 0)
+	{
+		game->wall.num_texture[EA]++;
+		return (load_direction_texture(game, str + 2, EA), true);
+	}
+	else if (ft_strncmp(str, "WE", 2) == 0)
+	{
+		game->wall.num_texture[WE]++;
+		return (load_direction_texture(game, str + 2, WE), true);
+	}
+	else
+		return (false);
+}
+
+void	load_direction_texture(t_game *game, char *str, t_dir dir)
+{
+	int		fd;
 	int		i;
 	int		len;
-	int		fd;
 	char	*path;
 
 	i = 0;
 	while (ft_isspace(str[i]))
 		i++;
 	len = 0;
-	while (str[len + i] != '\0' && str[len + i] != '\n' && str[len + i] != ' ')
+	while (str[len + i] != '\0' && str[len + i] != ' ')
 		len++;
 	path = ft_substr(str, i, len);
-	if (!path)
+	if (!path || len < 6)
 	{
-		ft_putendl_fd("no texture path", 2);
+		ft_putendl_fd("Wrong texture path", 2);
 		exit(EXIT_FAILURE);
 	}
 	if (ft_strcmp(path + len - 6, ".xpm42"))
@@ -241,49 +263,19 @@ void	direction_operations(t_game *game, char *str, char *dir)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 	{
-		ft_putendl_fd("File can not open", 2);
+		ft_putendl_fd("Texture file can not open", 2);
 		exit(EXIT_FAILURE);
 	}
-	match_direction_and_texture(game, dir, path);
+	check_direction_exist(game, dir, path);
 }
 
-bool is_it_direction_or_color(t_game *game, char *str)
+void	check_direction_exist(t_game *game, t_dir dir, char *path)
 {
-	int	i;
-	int	start;
-	int	len;
-
-	i = 0;
-	while (ft_isspace(str[i]))
-		i++;
-	start = i;
-	len = 0;
-	while (str[len + i] != ' ' && str[len + i] != '\n' && str[len + i] != '\0')
-		len++;
-	if (len == 2 && !ft_strncmp(str + start, "NO", 2))
+	if (game->wall.num_texture[dir] == 1)
+		game->wall.texture[dir] = mlx_load_xpm42(path)->texture;
+	else if (game->wall.num_texture[dir] > 1)
 	{
-		direction_operations(game, str + start + 2, "NO");
-		return (true);
+		ft_putendl_fd("Multiple texture of direction !", 2);
+		exit (EXIT_FAILURE);
 	}
-	else if (len == 2 && !ft_strncmp(str + start, "SO", 2))
-	{
-		direction_operations(game, str + start + 2, "SO");
-		return (true);
-	}
-	else if (len == 2 && !ft_strncmp(str + start, "WE", 2))
-	{
-		direction_operations(game, str + start + 2, "WE");
-		return (true);
-	}
-	else if (len == 2 && !ft_strncmp(str + start, "EA", 2))
-	{
-		direction_operations(game, str + start + 2, "EA");
-		return (true);
-	}
-	else if (len == 1)
-	{
-		if (is_floor_or_ceiling(game, str) == true)
-			return (true);
-	}
-	return (false);
 }

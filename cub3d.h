@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 18:15:51 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/24 05:02:34 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,25 @@ typedef struct s_ray
 typedef struct s_wall
 {
 	mlx_texture_t	texture[4];
-	int				no;
-	int				so;
-	int				we;
-	int				ea;
+	int				num_texture[4];
 	int				side;
 }t_wall;
+
+typedef struct s_map
+{
+	char	**map;
+	int		height;
+	int		width;
+}t_map;
 
 typedef struct s_game
 {
 	mlx_image_t	*img;
-	char		**map;
+	t_map		map;
 	t_wall		wall;
 	t_color		f_color;
-	int				f;
 	t_color		c_color;
+	int				f;
 	int				c;
 	t_ray		ray;
 	mlx_t		*mlx;
@@ -115,6 +119,7 @@ void	draw_map(t_game *game);
 bool	is_floor_or_ceiling(t_game *game, char *str);
 void	read_the_map(t_game *game, int fd);
 void	is_valid_map(t_game *game);
+char	*delete_slash_n(char *str);
 
 //help functions
 int		ft_isspace(char a);
@@ -122,4 +127,11 @@ int		ft_strcmp(char *str1, char *str2);
 void	free_double_char_arr(char **str);
 int		len_of_double_array(char **str);
 int		my_strlen(char *str);
+
+//wall_check.c
+void	left_wall_check(t_game *game);
+void	right_wall_check(t_game *game);
+void	top_wall_check(t_game *game);
+void	bottom_wall_check(t_game *game);
+
 #endif

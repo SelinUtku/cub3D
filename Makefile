@@ -12,7 +12,7 @@
 .SILENT:
 
 CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c key_control.c help_functions.c \
-				map_parsing.c
+				map_parsing.c wall_check.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 

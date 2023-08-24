@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 20:45:22 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/24 03:48:09 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,6 @@ void	open_image(char *str, t_game *game)
 	close(fd);
 }
 
-void	load_textures(t_game *game)
-{
-	game->wall.texture[NO] = mlx_load_xpm42("./textures/wall.xpm42")->texture;
-	game->wall.texture[SO] = mlx_load_xpm42("./textures/ruby.xpm42")->texture;
-	game->wall.texture[WE] = mlx_load_xpm42("./textures/box3.xpm42")->texture;
-	game->wall.texture[EA] = mlx_load_xpm42("./textures/door.xpm42")->texture;
-}
 
 void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
 {
