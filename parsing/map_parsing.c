@@ -6,15 +6,15 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 18:11:16 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/24 05:10:33 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/25 03:51:13 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 void	adjust_map(t_game *game);
 void	first_check_map(t_game *game);
-void	print_map(t_game *game);
+
 bool	check_valid_chracters(t_game *game, char c);
 void	find_player_direction(t_game *game, char c);
 
@@ -27,7 +27,7 @@ char	*delete_slash_n(char *str)
 		*temp = '\0';
 	return (str);
 }
-      
+
 void	add_line_to_map(t_game *game, char *str, int line)
 {
 	char	**temp;
@@ -54,12 +54,11 @@ void	read_the_map(t_game *game, int fd)
 
 	str = get_next_line(fd);
 	if (!str)
-		exit (EXIT_FAILURE);
+		error_handler(game, NO_MAP);
 	while (str)
 	{
 		i = 0;
-		while (ft_isspace(str[i]))
-			i++;
+		skip_spaces(str, &i);
 		if (str[i] != '\n' && str[i] != '\0')
 			break ;
 		else
@@ -72,16 +71,6 @@ void	read_the_map(t_game *game, int fd)
 		line++;
 		add_line_to_map(game, delete_slash_n(str), line);
 		str = get_next_line(fd);
-	}
-}
-
-void	print_map(t_game *game)
-{
-	int i = 0;
-	while (game->map.map[i])
-	{
-		printf("%s len = %d\n", game->map.map[i], ft_strlen(game->map.map[i]));
-		i++;
 	}
 }
 
@@ -99,26 +88,17 @@ void	first_check_map(t_game *game)
 		while (game->map.map[i][j])
 		{
 			if (check_valid_chracters(game, game->map.map[i][j]) == false)
-			{
-				printf("Invalid character!\n");
-				exit(EXIT_FAILURE);
-			}
+				error_handler(game, INV_CHAR);
 			j++;
 		}
 		if (j == 0)
-		{
-			printf("Empty line in map.!");
-			exit(EXIT_FAILURE);
-		}
+			error_handler(game, EMPTY_LINE);
 		else if (j > max_width)
 			max_width = j;
 		i++;
 	}
 	if (game->dir == -1)
-	{
-		printf("No player direction\n");
-		exit(EXIT_FAILURE);
-	}
+		error_handler(game, NO_PLAY_DIR);
 	game->map.height = i;
 	game->map.width = max_width;
 }
@@ -161,10 +141,7 @@ bool	check_valid_chracters(t_game *game, char c)
 	{
 		num_player++;
 		if (num_player > 1)
-		{
-			printf("Multiple player direction\n");
-			exit(EXIT_FAILURE);
-		}
+			error_handler(game, MULTI_DIR);
 		find_player_direction(game, c);
 		return (true);
 	}
@@ -190,7 +167,6 @@ void	is_valid_map(t_game *game)
 {
 	first_check_map(game);
 	adjust_map(game);
-	print_map(game);
 	left_wall_check(game);
 	right_wall_check(game);
 	top_wall_check(game);

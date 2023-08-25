@@ -11,8 +11,8 @@
 
 .SILENT:
 
-CB_SRC		=	with_vector.c texture.c ray_casting.c parsing.c key_control.c help_functions.c \
-				map_parsing.c wall_check.c
+CB_SRC		=	main.c texture.c ray_casting.c parsing/parsing.c key_control.c help_functions.c \
+				parsing/map_parsing.c parsing/wall_check.c parsing/floor_ceiling.c parsing/wall_textures.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
 
 
@@ -56,7 +56,7 @@ $(LIBFT_LIB):
 
 clean:
 	$(RM) $(CB_OBJ)
-	# $(RM) $(LIBFT_LIB)
+	$(RM) $(LIBFT_LIB)
 	echo "$(MAGENTA)Object-Files are cleaned!$(DEF_COLOR)"
 
 fclean: clean

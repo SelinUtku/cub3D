@@ -6,11 +6,11 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 01:17:35 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/24 01:28:44 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/25 03:46:35 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../cub3d.h"
 
 void	left_wall_check(t_game *game)
 {
