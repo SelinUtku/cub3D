@@ -3,33 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 20:45:22 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/25 23:59:37 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	open_image(char *str, t_game *game)
-{
-	int	fd;
-
-	fd = open(str, O_RDONLY);
-	if (fd < 0)
-	printf("ERROR\n");
-		// error_message(OPEN_IMAGE, game);
-	close(fd);
-}
-
-void	load_textures(t_game *game)
-{
-	game->wall.texture[NO] = mlx_load_xpm42("./textures/wall.xpm42")->texture;
-	game->wall.texture[SO] = mlx_load_xpm42("./textures/ruby.xpm42")->texture;
-	game->wall.texture[WE] = mlx_load_xpm42("./textures/box3.xpm42")->texture;
-	game->wall.texture[EA] = mlx_load_xpm42("./textures/door.xpm42")->texture;
-}
 
 void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
 {
@@ -39,26 +21,29 @@ void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
 	double wall_x;
 	double tex_y;
 	double tex_step;
-	double tex_x;
+	int tex_x;
 
 	lineHeight =  (int)(SCREEN_HEIGHT / perpWallDist);
-	drawStart = (SCREEN_HEIGHT - lineHeight) / 2;
-	drawEnd  = (lineHeight + SCREEN_HEIGHT) / 2;
+	drawStart = (SCREEN_HEIGHT / 2) - (lineHeight / 2);
+	// if(drawStart < 0)
+	// 	drawStart = 0;
+	drawEnd  = (lineHeight / 2) + (SCREEN_HEIGHT / 2);
+	// if (drawEnd >= SCREEN_HEIGHT)
+	// 	drawEnd = SCREEN_HEIGHT - 1;
 	if (game->wall.side % 2 == 0)
 		wall_x = game->player->y + perpWallDist * game->ray.y;
 	else
 		wall_x = game->player->x + perpWallDist * game->ray.x;
 	wall_x -= floor(wall_x);
-	if((game->wall.side == 0 || game->wall.side == 2)  && game->ray.x > 0)
-		tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
-	if((game->wall.side == 1 || game->wall.side == 3) && game->ray.y < 0)
-		tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
-	tex_x = wall_x * (double)game->wall.texture[game->wall.side].width;
+	// if((game->wall.side == 0 || game->wall.side == 2)  && game->ray.x > 0)
+	// 	tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
+	// if((game->wall.side == 1 || game->wall.side == 3) && game->ray.y < 0)
+	// 	tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
+	tex_x = (int)(wall_x * (double)game->wall.texture[game->wall.side].width);
 	tex_y = 0;
 	tex_step = (double)game->wall.texture[game->wall.side].height / (double)lineHeight;
 	if (drawStart < 0)
 		tex_y = fabs((double)drawStart) * tex_step;
-
 	unsigned int color;
 	int t = 0;
 	uint8_t *pixel;
@@ -73,9 +58,9 @@ void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
 			tex_y += tex_step;
 		}
 		else if (t < drawStart)
-			mlx_put_pixel(game->img, col, t, ft_pixel(153, 255, 255, 255));
+			mlx_put_pixel(game->img, col, t, ft_pixel(game->c_color.r, game->c_color.g, game->c_color.b, 255));
 		else if (t > drawEnd)
-			mlx_put_pixel(game->img, col, t, ft_pixel(160, 160, 160, 255));
+			mlx_put_pixel(game->img, col, t, ft_pixel(game->f_color.r, game->f_color.g, game->f_color.b, 255));
 		t++;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 00:39:04 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/21 00:40:41 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/25 03:58:22 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	len_of_double_array(char **str)
 	int	len;
 
 	len = 0;
-	while (str[len])
+	while (str[len] != NULL)
 		len++;
 	return (len);
 }
@@ -58,12 +58,24 @@ void	free_double_char_arr(char **str)
 	free(str);
 }
 
-int	my_strlen(char *str)
+void	error_handler(t_game *game, char *str)
 {
-	int	i;
+	ft_putendl_fd(str, 2);
+	//free_all
+	exit(EXIT_FAILURE);
+}
 
-	i = 0;
-	while (str[i] != '\0' && str[i] != '\n')
-		i++;
-	return (i);
+void	free_elements(t_game *game)
+{
+	while (game->num_elements > 0)
+	{
+		free(game->elements[game->num_elements]);
+		game->num_elements--;
+	}
+}
+
+void	skip_spaces(char *str, int *i)
+{
+	while (ft_isspace(str[*i]))
+		(*i)++;
 }

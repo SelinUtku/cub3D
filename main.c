@@ -1,44 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   with_vector.c                                      :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/23 00:54:18 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 01:46:35 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "cub3d.h"
-
-void	ft_hook(void *param);
-int		ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
-void	init_struct(t_game *game);
-void	player_position(t_game *game);
-void	draw_map(t_game *game);
-
-int map[18][24] = {
-				{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
-				{1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
-				{1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-				{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-};
 
 int	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 {
@@ -51,16 +24,18 @@ void	init_player_direction(t_game *game)
 	{
 		if (game->dir == WE)
 		{
-			game->player->dir_x = -1;
-			game->player->dir_y = 0;
+			game->player->dir_x = -1.0;
+			game->player->dir_y = 0.0;
+			game->plane_x = 0.0;
+			game->plane_y = -0.66;
 		}
 		else
 		{
-			game->player->dir_x = 1;
-			game->player->dir_y = 0;
+			game->player->dir_x = 1.0;
+			game->player->dir_y = 0.0;
+			game->plane_x = 0.0;
+			game->plane_y = 0.66;
 		}
-		game->plane_x = 0.0;
-		game->plane_y = 0.66;
 	}
 	if (game->dir == NO || game->dir == SO)
 	{
@@ -68,14 +43,16 @@ void	init_player_direction(t_game *game)
 		{
 			game->player->dir_x = 0.0;
 			game->player->dir_y = -1.0;
+			game->plane_x = 0.66;
+			game->plane_y = 0.0;
 		}
 		else
 		{
 			game->player->dir_x = 0.0;
 			game->player->dir_y = 1.0;
+			game->plane_x = -0.66;
+			game->plane_y = 0.0;
 		}
-		game->plane_x = 0.66;
-		game->plane_y = 0.0;
 	}
 }
 
@@ -85,17 +62,14 @@ void	init_struct(t_game *game)
 {
 	game->mlx = NULL;
 	game->player = malloc (sizeof(t_object));
-	game->dir = NO;
-	game->wall.no = 0;
-	game->wall.so = 0;
-	game->wall.we = 0;
-	game->wall.ea = 0;
-	game->map = NULL;
+	game->wall.num_texture[NO] = 0;
+	game->wall.num_texture[SO] = 0;
+	game->wall.num_texture[WE] = 0;
+	game->wall.num_texture[EA] = 0;
+	game->map.map = NULL;
 	game->f = 0;
 	game->c = 0;
 	game->dir = -1;
-	init_player_direction(game);
-	// load_textures(game);
 }
 
 void	player_position(t_game *game)
@@ -104,19 +78,20 @@ void	player_position(t_game *game)
 	int	y;
 
 	y = -1;
-	while (++y < 18)
+	while (++y < game->map.height)
 	{
 		x = -1;
-		while (++x < 24)
+		while (++x < game->map.width)
 		{
-			if (map[y][x] == 2)
+			if (game->map.map[y][x] == 'N' || game->map.map[y][x] == 'E' || game->map.map[y][x] == 'S' || game->map.map[y][x] == 'W')
 			{
-				game->player->x = x;
-				game->player->y = y;
+				game->player->x = (double)x;
+				game->player->y = (double)y;
 				return ;
 			}
 		}
 	}
+	printf(" height %d width %d\n", game->map.height, game->map.width);
 }
 
 void	draw_map(t_game *game)
@@ -172,13 +147,12 @@ int	main(int argc, char **argv)
 		// puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
 	}
+	open_map_file(game, "./map.cub");
 	player_position(game);
-	char **str = parse_the_map(game, "./map.cub");
-	check_validity_of_input(game, str);
-	is_valid_map(game);
-	// draw_map(game);
-	// mlx_loop_hook(game->mlx, ft_hook, game);
-	// mlx_loop(game->mlx);
-	// mlx_terminate(game->mlx);
+	init_player_direction(game);
+	draw_map(game);
+	mlx_loop_hook(game->mlx, ft_key_hook, game);
+	mlx_loop(game->mlx);
+	mlx_terminate(game->mlx);
 	return (EXIT_SUCCESS);
 }
