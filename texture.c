@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 04:37:01 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/25 23:59:37 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,25 @@ void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
 	double wall_x;
 	double tex_y;
 	double tex_step;
-	double tex_x;
+	int tex_x;
 
 	lineHeight =  (int)(SCREEN_HEIGHT / perpWallDist);
 	drawStart = (SCREEN_HEIGHT / 2) - (lineHeight / 2);
+	// if(drawStart < 0)
+	// 	drawStart = 0;
 	drawEnd  = (lineHeight / 2) + (SCREEN_HEIGHT / 2);
+	// if (drawEnd >= SCREEN_HEIGHT)
+	// 	drawEnd = SCREEN_HEIGHT - 1;
 	if (game->wall.side % 2 == 0)
 		wall_x = game->player->y + perpWallDist * game->ray.y;
 	else
 		wall_x = game->player->x + perpWallDist * game->ray.x;
 	wall_x -= floor(wall_x);
-	if((game->wall.side == 0 || game->wall.side == 2)  && game->ray.x > 0)
-		tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
-	if((game->wall.side == 1 || game->wall.side == 3) && game->ray.y < 0)
-		tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
-	tex_x = wall_x * (double)game->wall.texture[game->wall.side].width;
+	// if((game->wall.side == 0 || game->wall.side == 2)  && game->ray.x > 0)
+	// 	tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
+	// if((game->wall.side == 1 || game->wall.side == 3) && game->ray.y < 0)
+	// 	tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
+	tex_x = (int)(wall_x * (double)game->wall.texture[game->wall.side].width);
 	tex_y = 0;
 	tex_step = (double)game->wall.texture[game->wall.side].height / (double)lineHeight;
 	if (drawStart < 0)

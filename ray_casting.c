@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 04:14:50 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 01:19:59 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,16 @@ t_coord	dda(t_game *game)
 	dda.map_y = (int)(game->player->y);
 	dda.step_x = 1;
 	dda.step_y = 1;
-	if (game->ray.x * dda.step_x < 0)
+	if (game->ray.x < 0)
 	{
-		dda.step_x = -dda.step_x;
+		dda.step_x = -1;
 		dda.x = (game->player->x - dda.map_x) * game->ray.delta_x;
 	}
 	else
 		dda.x = (dda.map_x + 1.0 - game->player->x) * game->ray.delta_x;
-	if (game->ray.y * dda.step_y < 0)
+	if (game->ray.y < 0)
 	{
-		dda.step_y = -dda.step_y;
+		dda.step_y = -1;
 		dda.y = (game->player->y - dda.map_y) * game->ray.delta_y;
 	}
 	else
@@ -42,7 +42,7 @@ t_coord	dda(t_game *game)
 
 void	check_wall_hit(t_game *game, t_coord *dda)
 {
-	printf("%f %f %d %d %d %d\n",dda->x, dda->y, dda->map_x, dda->map_y, dda->step_x, dda->step_y);
+	// printf("%f %f %d %d %d %d\n",dda->x, dda->y, dda->map_x, dda->map_y, dda->step_x, dda->step_y);
 	while (true)
 	{
 		if (dda->x < dda->y)
@@ -63,7 +63,7 @@ void	check_wall_hit(t_game *game, t_coord *dda)
 			else
 				game->wall.side = 3;
 		}
-		if (game->map.map[dda->map_x][dda->map_y] == '1')
+		if (game->map.map[dda->map_y][dda->map_x] == '1')
 			break ;
 	}
 }

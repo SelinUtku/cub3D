@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 20:33:18 by Cutku             #+#    #+#             */
-/*   Updated: 2023/08/25 00:02:28 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 01:48:22 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,17 @@ void	keypress_up_down(t_game *game)
 	delta_y = game->player->dir_y * MOVE_SPEED;
 	if (mlx_is_key_down(game->mlx, MLX_KEY_W))
 	{
-		if (game->map.map[(int)(game->player->x + delta_x)][(int)game->player->y] != '1')
+		if (game->map.map[(int)game->player->y][(int)(game->player->x + delta_x)] != '1')
 			game->player->x += delta_x;
-		if (game->map.map[(int)game->player->x][(int)(game->player->y + delta_y)] != '1')
+		if (game->map.map[(int)(game->player->y + delta_y)][(int)game->player->x] != '1')
 			game->player->y += delta_y;
 		draw_map(game);
 	}
 	if (mlx_is_key_down(game->mlx, MLX_KEY_S))
 	{
-		if (game->map.map[(int)(game->player->x - delta_x)][(int)(game->player->y)] != '1')
+		if (game->map.map[(int)(game->player->y)][(int)(game->player->x - delta_x)] != '1')
 			game->player->x -= delta_x;
-		if (game->map.map[(int)game->player->x][(int)(game->player->y - delta_y)] != '1')
+		if (game->map.map[(int)(game->player->y - delta_y)][(int)game->player->x] != '1')
 			game->player->y -= delta_y;
 		draw_map(game);
 	}
@@ -46,23 +46,23 @@ void	keypress_left_right(t_game *game)
 	delta_y = game->player->dir_x * MOVE_SPEED;
 	if (mlx_is_key_down(game->mlx, MLX_KEY_A))
 	{
-		if (game->map.map[(int)(game->player->x + delta_x)][(int)game->player->y] != '1')
+		if (game->map.map[(int)game->player->y][(int)(game->player->x + delta_x)] != '1')
 			game->player->x += delta_x;
-		if (game->map.map[(int)game->player->x][(int)(game->player->y - delta_y)] != '1')
+		if (game->map.map[(int)(game->player->y - delta_y)][(int)game->player->x] != '1')
 			game->player->y -= delta_y;
 		draw_map(game);
 	}
 	if (mlx_is_key_down(game->mlx, MLX_KEY_D))
 	{
-		if (game->map.map[(int)(game->player->x - delta_x)][(int)game->player->y] != '1')
+		if (game->map.map[(int)game->player->y][(int)(game->player->x - delta_x)] != '1')
 			game->player->x -= delta_x;
-		if (game->map.map[(int)game->player->x][(int)(game->player->y + delta_y)] != '1')
+		if (game->map.map[(int)(game->player->y + delta_y)][(int)game->player->x] != '1')
 			game->player->y += delta_y;
 		draw_map(game);
 	}
 }
 
-void	keypress_left_rotate(t_game *game)
+void	keypress_right_rotate(t_game *game)
 {
 	double	old_dir_x;
 	double	old_plane_x;
@@ -80,7 +80,7 @@ void	keypress_left_rotate(t_game *game)
 	draw_map(game);
 }
 
-void	keypress_right_rotate(t_game *game)
+void	keypress_left_rotate(t_game *game)
 {
 	double	old_dir_x;
 	double	old_plane_x;

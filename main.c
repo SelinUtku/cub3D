@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 04:09:15 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 01:46:35 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,18 @@ void	init_player_direction(t_game *game)
 	{
 		if (game->dir == WE)
 		{
-			game->player->dir_x = -1;
-			game->player->dir_y = 0;
+			game->player->dir_x = -1.0;
+			game->player->dir_y = 0.0;
+			game->plane_x = 0.0;
+			game->plane_y = -0.66;
 		}
 		else
 		{
-			game->player->dir_x = 1;
-			game->player->dir_y = 0;
+			game->player->dir_x = 1.0;
+			game->player->dir_y = 0.0;
+			game->plane_x = 0.0;
+			game->plane_y = 0.66;
 		}
-		game->plane_x = 0.0;
-		game->plane_y = 0.66;
 	}
 	if (game->dir == NO || game->dir == SO)
 	{
@@ -41,14 +43,16 @@ void	init_player_direction(t_game *game)
 		{
 			game->player->dir_x = 0.0;
 			game->player->dir_y = -1.0;
+			game->plane_x = 0.66;
+			game->plane_y = 0.0;
 		}
 		else
 		{
 			game->player->dir_x = 0.0;
 			game->player->dir_y = 1.0;
+			game->plane_x = -0.66;
+			game->plane_y = 0.0;
 		}
-		game->plane_x = 0.66;
-		game->plane_y = 0.0;
 	}
 }
 
@@ -58,7 +62,6 @@ void	init_struct(t_game *game)
 {
 	game->mlx = NULL;
 	game->player = malloc (sizeof(t_object));
-	game->dir = NO;
 	game->wall.num_texture[NO] = 0;
 	game->wall.num_texture[SO] = 0;
 	game->wall.num_texture[WE] = 0;
@@ -82,7 +85,6 @@ void	player_position(t_game *game)
 		{
 			if (game->map.map[y][x] == 'N' || game->map.map[y][x] == 'E' || game->map.map[y][x] == 'S' || game->map.map[y][x] == 'W')
 			{
-				printf("%d,%d\n", y, x);
 				game->player->x = (double)x;
 				game->player->y = (double)y;
 				return ;
