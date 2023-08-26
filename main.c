@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/26 01:46:35 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 04:58:03 by Cutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ void	init_player_direction(t_game *game)
 		}
 	}
 }
-
-
 
 void	init_struct(t_game *game)
 {
@@ -115,9 +113,9 @@ void	draw_map(t_game *game)
 		else
 			game->ray.delta_y = fabs(1 / game->ray.y);
 		distance = dda(game);
-		if (game->wall.side % 2 == 0)
+		if (game->wall.side == EA || game->wall.side == WE)
 			draw_lineof_texture(game, i, distance.x - game->ray.delta_x);
-		else if (game->wall.side % 2 != 0)
+		else
 			draw_lineof_texture(game, i, distance.y - game->ray.delta_y);
 	}
 }
@@ -147,7 +145,7 @@ int	main(int argc, char **argv)
 		// puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
 	}
-	open_map_file(game, "./map.cub");
+	open_map_file(game, "./maps/map.cub");
 	player_position(game);
 	init_player_direction(game);
 	draw_map(game);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ray_casting.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/26 01:19:59 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 04:43:50 by Cutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ t_coord	dda(t_game *game)
 
 void	check_wall_hit(t_game *game, t_coord *dda)
 {
-	// printf("%f %f %d %d %d %d\n",dda->x, dda->y, dda->map_x, dda->map_y, dda->step_x, dda->step_y);
 	while (true)
 	{
 		if (dda->x < dda->y)
@@ -50,18 +49,18 @@ void	check_wall_hit(t_game *game, t_coord *dda)
 			dda->x += game->ray.delta_x;
 			dda->map_x += dda->step_x;
 			if (game->ray.x > 0)
-				game->wall.side = 0;
+				game->wall.side = EA;
 			else
-				game->wall.side = 2;
+				game->wall.side = WE;
 		}
 		else
 		{
 			dda->y += game->ray.delta_y;
 			dda->map_y += dda->step_y;
 			if (game->ray.y > 0)
-				game->wall.side = 1;
+				game->wall.side = SO;
 			else
-				game->wall.side = 3;
+				game->wall.side = NO;
 		}
 		if (game->map.map[dda->map_y][dda->map_x] == '1')
 			break ;

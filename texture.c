@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 23:59:37 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 04:48:02 by Cutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
 	drawEnd  = (lineHeight / 2) + (SCREEN_HEIGHT / 2);
 	// if (drawEnd >= SCREEN_HEIGHT)
 	// 	drawEnd = SCREEN_HEIGHT - 1;
-	if (game->wall.side % 2 == 0)
+	if (game->wall.side == WE || game->wall.side == EA)
 		wall_x = game->player->y + perpWallDist * game->ray.y;
 	else
 		wall_x = game->player->x + perpWallDist * game->ray.x;
