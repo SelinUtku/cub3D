@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/26 04:58:03 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 20:58:53 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ void	player_position(t_game *game)
 		x = -1;
 		while (++x < game->map.width)
 		{
-			if (game->map.map[y][x] == 'N' || game->map.map[y][x] == 'E' || game->map.map[y][x] == 'S' || game->map.map[y][x] == 'W')
+			if (game->map.map[y][x] == 'N' || game->map.map[y][x] == 'E' \
+			|| game->map.map[y][x] == 'S' || game->map.map[y][x] == 'W')
 			{
 				game->player->x = (double)x;
 				game->player->y = (double)y;
@@ -120,10 +121,16 @@ void	draw_map(t_game *game)
 	}
 }
 
+void	leaks(void)
+{
+	system("leaks cub3D");
+}
+
 int	main(int argc, char **argv)
 {
 	t_game	*game;
 	
+	atexit(&leaks);
 	game = malloc(sizeof(t_game));
 	if (!game)
 		return (EXIT_FAILURE);
@@ -145,7 +152,7 @@ int	main(int argc, char **argv)
 		// puts(mlx_strerror(mlx_errno));
 		return(EXIT_FAILURE);
 	}
-	open_map_file(game, "./maps/map.cub");
+	open_map_file(game, "./maps/small.cub");
 	player_position(game);
 	init_player_direction(game);
 	draw_map(game);

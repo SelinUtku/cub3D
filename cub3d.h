@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 03:53:21 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 20:55:23 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct s_coord
 	int		step_y;
 }t_coord;
 
-typedef	struct s_color
+typedef struct s_color
 {
 	int	r;
 	int	g;
@@ -94,6 +94,17 @@ typedef struct s_ray
 	double		delta_y;
 	int			len;
 }t_ray;
+
+typedef struct s_draw
+{
+	int		line_height;
+	int		start;
+	int		end;
+	int		text_x;
+	double	text_y;
+	double	wall_x;
+	double	text_step;
+}t_draw;
 
 typedef struct s_wall
 {

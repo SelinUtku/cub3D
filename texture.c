@@ -3,89 +3,64 @@
 /*                                                        :::      ::::::::   */
 /*   texture.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Cutku <cutku@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 19:27:11 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/26 04:48:02 by Cutku            ###   ########.fr       */
+/*   Updated: 2023/08/26 20:55:09 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+void	draw_column(t_game *game, t_draw *draw, int col);
 
-void	draw_lineof_texture(t_game *game, int col, double perpWallDist)
+void	draw_lineof_texture(t_game *game, int col, double wall_distance)
 {
-	int lineHeight;
-	int drawStart;
-	int drawEnd;
-	double wall_x;
-	double tex_y;
-	double tex_step;
-	int tex_x;
+	t_draw	draw;
 
-	lineHeight =  (int)(SCREEN_HEIGHT / perpWallDist);
-	drawStart = (SCREEN_HEIGHT / 2) - (lineHeight / 2);
-	// if(drawStart < 0)
-	// 	drawStart = 0;
-	drawEnd  = (lineHeight / 2) + (SCREEN_HEIGHT / 2);
-	// if (drawEnd >= SCREEN_HEIGHT)
-	// 	drawEnd = SCREEN_HEIGHT - 1;
+	draw.line_height = (int)(SCREEN_HEIGHT / wall_distance);
+	draw.start = (SCREEN_HEIGHT / 2) - (draw.line_height / 2);
+	draw.end = (draw.line_height / 2) + (SCREEN_HEIGHT / 2);
 	if (game->wall.side == WE || game->wall.side == EA)
-		wall_x = game->player->y + perpWallDist * game->ray.y;
+		draw.wall_x = game->player->y + wall_distance * game->ray.y;
 	else
-		wall_x = game->player->x + perpWallDist * game->ray.x;
-	wall_x -= floor(wall_x);
-	// if((game->wall.side == 0 || game->wall.side == 2)  && game->ray.x > 0)
-	// 	tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
-	// if((game->wall.side == 1 || game->wall.side == 3) && game->ray.y < 0)
-	// 	tex_x = (double)game->wall.texture[game->wall.side].width - tex_x - 1.0;
-	tex_x = (int)(wall_x * (double)game->wall.texture[game->wall.side].width);
-	tex_y = 0;
-	tex_step = (double)game->wall.texture[game->wall.side].height / (double)lineHeight;
-	if (drawStart < 0)
-		tex_y = fabs((double)drawStart) * tex_step;
-	unsigned int color;
-	int t = 0;
-	uint8_t *pixel;
+		draw.wall_x = game->player->x + wall_distance * game->ray.x;
+	draw.wall_x -= floor(draw.wall_x);
+	draw.text_x = (int)(draw.wall_x * \
+	(double)game->wall.texture[game->wall.side].width);
+	draw.text_y = 0;
+	draw.text_step = (double)game->wall.texture[game->wall.side].height / \
+	(double)draw.line_height;
+	if (draw.start < 0)
+		draw.text_y = fabs((double)draw.start) * draw.text_step;
+	draw_column(game, &draw, col);
+}
+
+void	draw_column(t_game *game, t_draw *draw, int col)
+{
+	unsigned int	color;
+	int				t;
+	uint8_t			*pixel;
+	int				num;
+
+	t = 0;
 	while (t < SCREEN_HEIGHT)
 	{
-		// if ((int)tex_y * texture.width * 4 + (int)tex_x * 4 < 80 * 80 * 4)
-		if (t >= drawStart && t <= drawEnd)
+		if (t >= draw->start && t <= draw->end)
 		{
-			pixel = &game->wall.texture[game->wall.side].pixels[(int)tex_y * game->wall.texture[game->wall.side].width * 4  + (int)tex_x * 4];
-			color = ft_pixel(*(pixel), *(pixel + 1), *(pixel + 2), *(pixel + 3));
-				mlx_put_pixel(game->img, col, t, color);
-			tex_y += tex_step;
+			num = game->wall.texture[game->wall.side].width * 4 * \
+			(int)draw->text_y + (int)draw->text_x * 4;
+			pixel = &game->wall.texture[game->wall.side].pixels[num];
+			color = ft_pixel(pixel[0], pixel[1], pixel[2], pixel[3]);
+			mlx_put_pixel(game->img, col, t, color);
+			draw->text_y += draw->text_step;
 		}
-		else if (t < drawStart)
-			mlx_put_pixel(game->img, col, t, ft_pixel(game->c_color.r, game->c_color.g, game->c_color.b, 255));
-		else if (t > drawEnd)
-			mlx_put_pixel(game->img, col, t, ft_pixel(game->f_color.r, game->f_color.g, game->f_color.b, 255));
+		else if (t < draw->start)
+			mlx_put_pixel(game->img, col, t, \
+			ft_pixel(game->c_color.r, game->c_color.g, game->c_color.b, 255));
+		else if (t > draw->end)
+			mlx_put_pixel(game->img, col, t, \
+			ft_pixel(game->f_color.r, game->f_color.g, game->f_color.b, 255));
 		t++;
 	}
 }
-
-// void	put_textures_to_img()
-// {
-// 	unsigned int color;
-// 	int t;
-// 	uint8_t *pixel;
-
-// 	t = 0;
-// 	while (t < SCREEN_HEIGHT)
-// 	{
-// 		// if ((int)tex_y * texture.width * 4 + (int)tex_x * 4 < 80 * 80 * 4)
-// 		if (t >= drawStart && t <= drawEnd)
-// 		{
-// 			pixel = &game->wall.texture[game->wall.side].pixels[(int)tex_y * game->wall.texture[game->wall.side].width * 4  + (int)tex_x * 4];
-// 			color = ft_pixel(*(pixel), *(pixel + 1), *(pixel + 2), *(pixel + 3));
-// 				mlx_put_pixel(game->img, col, t, color);
-// 			tex_y+=tex_step;
-// 		}
-// 		else if (t < drawStart)
-// 			mlx_put_pixel(game->img, col, t, ft_pixel(153, 255, 255, 255));
-// 		else if (t > drawEnd)
-// 			mlx_put_pixel(game->img, col, t, ft_pixel(160, 160, 160, 255));
-// 		t++;
-// 	}
-// }
