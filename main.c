@@ -6,119 +6,54 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:17 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/26 20:58:53 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/27 04:04:34 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "cub3d.h"
 
-int	ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
+void	ft_key_hook(void *param)
 {
-	return (r << 24 | g << 16 | b << 8 | a);
+	t_game	*game;
+
+	game = (t_game *)param;
+	if (mlx_is_key_down(game->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(game->mlx);
+	if (mlx_is_key_down(game->mlx, MLX_KEY_W))
+		keypress_up(game);
+	if (mlx_is_key_down(game->mlx, MLX_KEY_S))
+		keypress_down(game);
+	if (mlx_is_key_down(game->mlx, MLX_KEY_A))
+		keypress_left(game);
+	if (mlx_is_key_down(game->mlx, MLX_KEY_D))
+		keypress_right(game);
+	if (mlx_is_key_down(game->mlx, MLX_KEY_LEFT))
+		keypress_left_rotate(game);
+	if (mlx_is_key_down(game->mlx, MLX_KEY_RIGHT))
+		keypress_right_rotate(game);
 }
 
-void	init_player_direction(t_game *game)
+int	check_argv(char **argv)
 {
-	if (game->dir == WE || game->dir == EA)
+	int	len;
+	int	fd;
+
+	len = ft_strlen(argv[1]);
+	if (len > 4 && (ft_strncmp(argv[1] + len - 4, ".cub", 4) == 0))
 	{
-		if (game->dir == WE)
+		fd = open(argv[1], O_RDONLY);
+		if (fd < 0)
 		{
-			game->player->dir_x = -1.0;
-			game->player->dir_y = 0.0;
-			game->plane_x = 0.0;
-			game->plane_y = -0.66;
-		}
-		else
-		{
-			game->player->dir_x = 1.0;
-			game->player->dir_y = 0.0;
-			game->plane_x = 0.0;
-			game->plane_y = 0.66;
+			ft_putendl_fd(FILE, 2);
+			exit (EXIT_FAILURE);
 		}
 	}
-	if (game->dir == NO || game->dir == SO)
+	else
 	{
-		if (game->dir == NO)
-		{
-			game->player->dir_x = 0.0;
-			game->player->dir_y = -1.0;
-			game->plane_x = 0.66;
-			game->plane_y = 0.0;
-		}
-		else
-		{
-			game->player->dir_x = 0.0;
-			game->player->dir_y = 1.0;
-			game->plane_x = -0.66;
-			game->plane_y = 0.0;
-		}
+		ft_putstr_fd("Not .cub file!\n", 2);
+		exit (EXIT_FAILURE);
 	}
-}
-
-void	init_struct(t_game *game)
-{
-	game->mlx = NULL;
-	game->player = malloc (sizeof(t_object));
-	game->wall.num_texture[NO] = 0;
-	game->wall.num_texture[SO] = 0;
-	game->wall.num_texture[WE] = 0;
-	game->wall.num_texture[EA] = 0;
-	game->map.map = NULL;
-	game->f = 0;
-	game->c = 0;
-	game->dir = -1;
-}
-
-void	player_position(t_game *game)
-{
-	int	x;
-	int	y;
-
-	y = -1;
-	while (++y < game->map.height)
-	{
-		x = -1;
-		while (++x < game->map.width)
-		{
-			if (game->map.map[y][x] == 'N' || game->map.map[y][x] == 'E' \
-			|| game->map.map[y][x] == 'S' || game->map.map[y][x] == 'W')
-			{
-				game->player->x = (double)x;
-				game->player->y = (double)y;
-				return ;
-			}
-		}
-	}
-	printf(" height %d width %d\n", game->map.height, game->map.width);
-}
-
-void	draw_map(t_game *game)
-{
-	int		i;
-	double	camera_x;
-	t_coord	distance;
-
-	i = -1;
-	while (++i < SCREEN_WIDTH)
-	{
-		camera_x = 2 * i / (double)SCREEN_WIDTH - 1;
-		game->ray.x = game->player->dir_x + game->plane_x * camera_x;
-		game->ray.y = game->player->dir_y + game->plane_y * camera_x;
-		if (game->ray.x == 0)
-			game->ray.delta_x = 1e30;
-		else
-			game->ray.delta_x = fabs(1 / game->ray.x);
-		if (game->ray.y == 0)
-			game->ray.delta_y = 1e30;
-		else
-			game->ray.delta_y = fabs(1 / game->ray.y);
-		distance = dda(game);
-		if (game->wall.side == EA || game->wall.side == WE)
-			draw_lineof_texture(game, i, distance.x - game->ray.delta_x);
-		else
-			draw_lineof_texture(game, i, distance.y - game->ray.delta_y);
-	}
+	return (fd);
 }
 
 void	leaks(void)
@@ -128,36 +63,26 @@ void	leaks(void)
 
 int	main(int argc, char **argv)
 {
-	t_game	*game;
-	
+	t_game	game;
+
+	if (argc != 2)
+		return (ft_putendl_fd("No argument !", 2), EXIT_FAILURE);
 	atexit(&leaks);
-	game = malloc(sizeof(t_game));
-	if (!game)
+	check_argv(argv);
+	init_struct(&game);
+	if (mlx_image_to_window(game.mlx, game.img, 0, 0) == -1)
+	{
+		mlx_close_window(game.mlx);
+		puts(mlx_strerror(mlx_errno));
 		return (EXIT_FAILURE);
-	init_struct(game);
-	if (!(game->mlx = mlx_init(1600, 800, "cub3D", true)))
-	{
-		// puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
 	}
-	if (!(game->img = mlx_new_image(game->mlx, 1600, 800)))
-	{
-		mlx_close_window(game->mlx);
-		// puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (mlx_image_to_window(game->mlx, game->img, 0, 0) == -1)
-	{
-		mlx_close_window(game->mlx);
-		// puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	open_map_file(game, "./maps/small.cub");
-	player_position(game);
-	init_player_direction(game);
-	draw_map(game);
-	mlx_loop_hook(game->mlx, ft_key_hook, game);
-	mlx_loop(game->mlx);
-	mlx_terminate(game->mlx);
+	open_map_file(&game, check_argv(argv));
+	player_position(&game);
+	init_player_direction(&game);
+	draw_map(&game);
+	mlx_loop_hook(game.mlx, ft_key_hook, &game);
+	mlx_loop(game.mlx);
+	free_all(&game);
+	mlx_terminate(game.mlx);
 	return (EXIT_SUCCESS);
 }

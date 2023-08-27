@@ -11,10 +11,12 @@
 
 .SILENT:
 
-CB_SRC		=	main.c texture.c ray_casting.c parsing/parsing.c key_control.c help_functions.c \
-				parsing/map_parsing.c parsing/wall_check.c parsing/floor_ceiling.c parsing/wall_textures.c
+CB_SRC		=	main.c texture.c ray_casting.c  help_functions.c \
+				movements.c rotations.c help_functions2.c \
+				parsing/parsing.c parsing/map_parsing.c parsing/wall_check.c \
+				parsing/floor_ceiling.c parsing/wall_textures.c parsing/map_parsing_utils.c \
+				init.c
 CB_OBJ		=	$(CB_SRC:.c=.o)
-
 
 MLX			=	MLX42/build
 MLX_LIB		=	MLX42/build/libmlx42.a
@@ -25,10 +27,9 @@ LIBFT_LIB	=	libft/libft.a
 
 CC		= 	cc
 RM		=   rm -f
-CFLAGS	=	#-Wall -Werror -Wextra
+CFLAGS	= -Wall -Werror -Wextra 
 
 NAME	=	cub3D
-# NAME_B	=	so_long_bonus
 
 DEF_COLOR = \033[0;39m
 RED = \033[0;91m
@@ -65,4 +66,4 @@ fclean: clean
 
 re: fclean all 
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 20:53:24 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/26 20:55:23 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/27 03:58:24 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ typedef enum e_dir
 	SO,
 	WE,
 	EA,
+	NON,
 }t_dir;
 
 typedef struct s_coord
@@ -110,6 +111,7 @@ typedef struct s_wall
 {
 	mlx_texture_t	texture[4];
 	int				num_texture[4];
+	xpm_t			*xpm[4];
 	int				side;
 }t_wall;
 
@@ -133,49 +135,59 @@ typedef struct s_game
 	int			c;
 	t_ray		ray;
 	mlx_t		*mlx;
-	t_object	*player;
+	t_object	player;
 	t_dir		dir;
 	double		plane_x;
 	double		plane_y;
-	mlx_image_t	*texture;
 }t_game;
 
-void	open_image(char *str, t_game *game);
-void	draw_lineof_texture(t_game *game, int col, double perpWallDist);
-int		ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
+// ray_casting.c
 t_coord	dda(t_game *game);
-int		len_of_double_array(char **str);
 void	draw_map(t_game *game);
-void	read_the_map(t_game *game, int fd);
-void	is_valid_map(t_game *game);
-char	*delete_slash_n(char *str);
+void	check_wall_hit(t_game *game, t_coord *dda);
 
-//parsing.c
-void	open_map_file(t_game *game, char *path);
-void	parse_the_elements(t_game *game, int fd);
+// texture.c
+void	draw_lineof_texture(t_game *game, int col, double perpWallDist);
+void	draw_column(t_game *game, t_draw *draw, int col);
+
+// PARSING
+// map.parsing.c
+void	add_line_to_map(t_game *game, char *str, int line);
+void	read_the_map(t_game *game, int fd, char *first_str);
+void	first_check_map(t_game *game);
+void	adjust_map(t_game *game);
+void	is_valid_map(t_game *game);
+// map_parsing_utils.c
+bool	check_valid_chracters(t_game *game, char c);
+void	find_player_direction(t_game *game, char c);
+// parsing.c
+void	open_map_file(t_game *game, int fd);
+char	*parse_the_elements(t_game *game, int fd);
 bool	check_number_of_elements(t_game *game);
 void	check_validity_of_elements(t_game *game);
 void	direction_or_color(t_game *game, char *str);
-
-//help functions
-int		ft_isspace(char a);
-int		ft_strcmp(char *str1, char *str2);
-void	free_double_char_arr(char **str);
-int		len_of_double_array(char **str);
-void	free_elements(t_game *game);
-void	error_handler(t_game *game, char *str);
-void	skip_spaces(char *str, int *i);
-
 //wall_check.c
 void	left_wall_check(t_game *game);
 void	right_wall_check(t_game *game);
 void	top_wall_check(t_game *game);
 void	bottom_wall_check(t_game *game);
-
 //wall_textures.c
 void	is_valid_direction(t_game *game, char *str);
-void	check_direction_exist(t_game *game, t_dir dir, char *path);
+void	check_texture_path(t_game *game, char *path, int len);
 void	load_direction_texture(t_game *game, char *str, t_dir dir);
+void	check_direction_exist(t_game *game, t_dir dir, char *path);
+
+//help functions
+int		ft_isspace(char a);
+int		ft_strcmp(char *str1, char *str2);
+void	skip_spaces(char *str, int *i);
+int		len_of_double_array(char **str);
+void	error_handler(t_game *game, char *str);
+int		ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a);
+void	free_double_char_arr(char **str);
+void	free_elements(t_game *game);
+char	*delete_slash_n(char *str);
+void	free_all(t_game *game);
 
 //floor_ceiling.c
 void	floor_or_ceiling(t_game *game, char *str);
@@ -183,10 +195,21 @@ void	control_f_c_args(t_game *game, char *str, t_color *color);
 void	is_valid_rgb(t_game *game, char **str);
 void	put_rgb_colors(t_color *color, char **str);
 
-void	ft_key_hook(void *param);
+// movements and rotations
+void	keypress_up(t_game *game);
+void	keypress_down(t_game *game);
+void	keypress_left(t_game *game);
+void	keypress_right(t_game *game);
+void	keypress_right_rotate(t_game *game);
+void	keypress_left_rotate(t_game *game);
+
+// init.c
 void	init_struct(t_game *game);
 void	player_position(t_game *game);
+void	init_player_direction(t_game *game);
 
+//main.c
+void	ft_key_hook(void *param);
+int		check_argv(char **argv);
 
-void	print_map(t_game *game);
 #endif
