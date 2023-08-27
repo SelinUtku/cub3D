@@ -6,7 +6,7 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 02:59:30 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 03:46:39 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/27 00:59:27 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void	check_texture_path(t_game *game, char *path, int len)
 
 void	load_direction_texture(t_game *game, char *str, t_dir dir)
 {
-	int		fd;
 	int		i;
 	int		len;
 	char	*path;
@@ -85,10 +84,14 @@ void	load_direction_texture(t_game *game, char *str, t_dir dir)
 void	check_direction_exist(t_game *game, t_dir dir, char *path)
 {
 	if (game->wall.num_texture[dir] == 1)
-		game->wall.texture[dir] = mlx_load_xpm42(path)->texture;
+	{
+		game->wall.xpm[dir] = mlx_load_xpm42(path);
+		game->wall.texture[dir] = game->wall.xpm[dir]->texture;
+	}
 	else if (game->wall.num_texture[dir] > 1)
 	{
 		free(path);
 		error_handler(game, MULTI_TEXT);
 	}
+	free(path);
 }

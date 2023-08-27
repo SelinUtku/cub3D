@@ -5,28 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/21 18:11:16 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 23:37:25 by sutku            ###   ########.fr       */
+/*   Created: 2023/08/27 01:41:19 by sutku             #+#    #+#             */
+/*   Updated: 2023/08/27 01:43:30 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
-
-void	adjust_map(t_game *game);
-void	first_check_map(t_game *game);
-
-bool	check_valid_chracters(t_game *game, char c);
-void	find_player_direction(t_game *game, char c);
-
-char	*delete_slash_n(char *str)
-{
-	char	*temp;
-
-	temp = ft_strrchr(str, '\n');
-	if (temp)
-		*temp = '\0';
-	return (str);
-}
 
 void	add_line_to_map(t_game *game, char *str, int line)
 {
@@ -46,13 +30,13 @@ void	add_line_to_map(t_game *game, char *str, int line)
 	free(temp);
 }
 
-void	read_the_map(t_game *game, int fd)
+void	read_the_map(t_game *game, int fd, char *first_str)
 {
 	char	*str;
 	int		i;
 	int		line;
 
-	str = get_next_line(fd);
+	str = first_str;
 	if (!str)
 		error_handler(game, NO_MAP);
 	while (str)
@@ -97,7 +81,7 @@ void	first_check_map(t_game *game)
 			max_width = j;
 		i++;
 	}
-	if (game->dir == -1)
+	if (game->dir == NON)
 		error_handler(game, NO_PLAY_DIR);
 	game->map.height = i;
 	game->map.width = max_width;
@@ -110,7 +94,7 @@ void	adjust_map(t_game *game)
 	char	*temp;
 
 	i = 0;
-	while (game->map.map[i])
+	while (i < game->map.height)
 	{
 		j = 0;
 		temp = malloc(game->map.width + 1);
@@ -129,38 +113,6 @@ void	adjust_map(t_game *game)
 		game->map.map[i] = temp;
 		i++;
 	}
-}
-
-bool	check_valid_chracters(t_game *game, char c)
-{
-	static int	num_player = 0;
-
-	if (c == '1' || c == '0')
-		return (true);
-	else if (c == 'N' || c == 'E' || c == 'S' || c == 'W')
-	{
-		num_player++;
-		if (num_player > 1)
-			error_handler(game, MULTI_DIR);
-		find_player_direction(game, c);
-		return (true);
-	}
-	else if (c == ' ')
-		return (true);
-	else
-		return (false);
-}
-
-void	find_player_direction(t_game *game, char c)
-{
-	if (c == 'N')
-		game->dir = NO;
-	else if (c == 'S')
-		game->dir = SO;
-	else if (c == 'W')
-		game->dir = WE;
-	else if (c == 'E')
-		game->dir = EA;
 }
 
 void	is_valid_map(t_game *game)

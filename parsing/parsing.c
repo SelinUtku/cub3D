@@ -6,31 +6,28 @@
 /*   By: sutku <sutku@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 17:19:07 by sutku             #+#    #+#             */
-/*   Updated: 2023/08/25 03:54:47 by sutku            ###   ########.fr       */
+/*   Updated: 2023/08/27 01:44:48 by sutku            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
-void	open_map_file(t_game *game, char *path)
+void	open_map_file(t_game *game, int fd)
 {
-	int		fd;
+	char	*str;
 
-	fd = open(path, O_RDONLY);
-	if (fd < 0)
-		error_handler(game, FILE);
-	parse_the_elements(game, fd);
-	read_the_map(game, fd);
+	str = parse_the_elements(game, fd);
+	free_elements(game);
+	read_the_map(game, fd, str);
 	is_valid_map(game);
 	close(fd);
 }
 
-void	parse_the_elements(t_game *game, int fd)
+char	*parse_the_elements(t_game *game, int fd)
 {
 	int		i;
 	char	*str;
 
-	game->num_elements = 0;
 	str = get_next_line(fd);
 	while (str != NULL && game->num_elements < 6)
 	{
@@ -52,12 +49,14 @@ void	parse_the_elements(t_game *game, int fd)
 		error_handler(game, W_FILE);
 	}
 	check_validity_of_elements(game);
+	return (str);
 }
 
 bool	check_number_of_elements(t_game *game)
 {
 	int	i;
 
+	i = 0;
 	while (i < 4)
 	{
 		if (game->wall.num_texture[i] == 0)
@@ -87,7 +86,6 @@ void	check_validity_of_elements(t_game *game)
 	if (check_number_of_elements(game) == false)
 	{
 		free_elements(game);
-		//free_all;
 		exit (EXIT_FAILURE);
 	}
 }
